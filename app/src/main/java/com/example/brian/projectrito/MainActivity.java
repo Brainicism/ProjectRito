@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     public static List<MatchReference> matchRefList;
     public static List<MatchReference> cleanedRefList = new ArrayList<>();
     public static List<Match> matchList;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -131,9 +132,7 @@ public class MainActivity extends AppCompatActivity {
         serverRegion = prefs.getString("serverRegion", "");
         matchHistoryLength = prefs.getInt("matchHistoryLength", 0);
         initialAPISetup(); //updates API settings
-
         bootsRemapDate();
-
     }
 
     @Override
@@ -145,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.i(TAG, "CONFIG CHANGED");
     }
-
 
     private class checkValidSummoner extends AsyncTask<String, Void, Void> {
         Summoner prevSummoner = summoner;
@@ -159,10 +157,7 @@ public class MainActivity extends AppCompatActivity {
             gameModePreference = prefs.getString("gameModePreference", ""); //gets data from shared preferences
             serverRegion = prefs.getString("serverRegion", "");
             matchHistoryLength = prefs.getInt("matchHistoryLength", 0);
-
             initialAPISetup(); //updates API settings
-
-
         }
 
         @Override
@@ -183,8 +178,6 @@ public class MainActivity extends AppCompatActivity {
                     serverDown = true;
                 }
             }
-
-
             try {
                 matchRefList = summoner.getMatchList();//gets summoner's ranked match list
             } catch (NullPointerException e) { //catches exception when summoner has no matches played
@@ -195,16 +188,13 @@ public class MainActivity extends AppCompatActivity {
                     serverDown = true;
                 }
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-
             if (serverDown) { //if the API server is down
                 Toast.makeText(MainActivity.this, "API might be down", Toast.LENGTH_SHORT).show();
-
             } else {
                 if (!summonerFound) { //if summoner was not found (does not exist)
                     {
@@ -213,9 +203,7 @@ public class MainActivity extends AppCompatActivity {
                             summoner = prevSummoner;
                             summonerName = summoner.getName();
                         }
-
                     }
-
                 } else {
                     if (matchRefList == null) { //if summoner has never played a ranked game
                         Toast.makeText(MainActivity.this, "ERROR: Summoner has no ranked games played?", Toast.LENGTH_SHORT).show();
@@ -249,13 +237,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
         @Override
         protected List<Match> doInBackground(Void... voids) { //
             cleanedRefList.clear();
             currentRealmsVer = BaseRiotAPI.getRealm().getV(); //gets current version of ddragon server
             int matchesFound = 0; //count of how many matches of the specified game mode is found
-
             if (gameModePreference.equals("RANKED_SOLO_5x5")) { //selectively gathers matches based on queue type
                 for (int i = 0; i < matchRefList.size(); i++) {
 
@@ -266,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, matchRefList.get(i).getQueueType().toString());
                         matchesFound++;
                     }
-
                 }
             } else if (gameModePreference.equals("RANKED_TEAM_5x5")) {
                 for (int i = 0; i < matchRefList.size(); i++) {
@@ -288,9 +273,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, matchRefList.get(i).getQueueType().toString());
                         matchesFound++;
                     }
-
                 }
-
             } else if (gameModePreference.equals("ALL")) {
                 for (int i = 0; i < matchRefList.size(); i++) {
                     if (matchesFound >= matchHistoryLength)
@@ -299,11 +282,8 @@ public class MainActivity extends AppCompatActivity {
                     matchesFound++;
                 }
             }
-
-
             matchList = new ArrayList<>();
             matchList.clear();
-
             for (int i = 0; i < cleanedRefList.size(); i++) //converts match reference objects to match objects
             {
                 Log.i(TAG, String.valueOf(cleanedRefList.get(i).getMatch().getID()) + " " + String.valueOf(i));
@@ -315,10 +295,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (APIException e) {
                 Log.i(TAG, String.valueOf(e.getStatus()));
             }
-
             summonerLeague = null;
             summonerLeagueEntry = null;
-
             promos = null;
             for (int i = 0; i < listLeague.size(); i++) {
                 if (listLeague.get(i).getQueueType().toString().equals("RANKED_SOLO_5x5")) { //gets user's solo queue rank
@@ -352,7 +330,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "User has no games of Ranked Team 5v5 played. Try switching game mode preference", Toast.LENGTH_LONG).show();
                     case "RANKED_TEAM_3x3":
                         Toast.makeText(MainActivity.this, "User has no games of Ranked Team 3v3 played. Try switching game mode preference", Toast.LENGTH_LONG).show();
-
                 }
 
             }
@@ -372,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
                     String matchPicked = "You selected " + String.valueOf(adapterView.getItemAtPosition(position));
                     Toast.makeText(MainActivity.this, matchPicked, Toast.LENGTH_SHORT).show();
                 }
@@ -575,7 +551,6 @@ public class MainActivity extends AppCompatActivity {
         RiotAPI.setRateLimit(new RateLimit(10, 10), new RateLimit(500, 600));
         RiotAPI.setAPIKey("4fc4080e-f78b-4c10-a00d-2d75a4503a88");
     }
-
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -644,8 +619,5 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return R.drawable.unranked;
         }
-
-
     }
-
 }
