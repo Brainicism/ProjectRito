@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ModeTypes">
+        <item>"Ranked Solo 5v5"</item>
+        <item>"Ranked Team 5v5</item>
+        <item>"Ranked Team 3V3</item>
+        <item>"All"</item>
+    </string-array>
+    <string-array name="ModeTypesEntry">
+        <item>"RANKED_SOLO_5x5"</item>
+        <item>"RANKED_TEAM_5x5</item>
+        <item>"RANKED_TEAM_3x3</item>
+        <item>"ALL"</item>
+    </string-array>
+    <string-array name="ServerRegion">
+        <item>"North America"</item>
+        <item>"Korea"</item>
+        <item>"Europe West"</item>
+        <item>"Europe Nordic East"</item>
+        <item>"Brazil</item>
+        <item>"Turkey"</item>
+        <item>"Latin America South</item>
+        <item>"Latin America North</item>
+        <item>"Oceania"</item>
+        <item>"Russia"</item>
+
+    </string-array>
+    <string-array name="ServerRegionEntry">
+        <item>"NA"</item>
+        <item>"KR"</item>
+        <item>"EUW"</item>
+        <item>"EUNE"</item>
+        <item>"BR"</item>
+        <item>"TR"</item>
+        <item>"LAS"</item>
+        <item>"LAN"</item>
+        <item>"OCE"</item>
+        <item>"RU"</item>
+
+    </string-array>
+
+
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.example.brian.projectrito.CustomMultilistPreference
+        android:entries="@array/ServerRegion"
+        android:entryValues="@array/ServerRegionEntry"
+        android:key="serverRegion"
+        android:defaultValue="NA"
+        android:summary="The region used to search for the summoner"
+        android:title="Default Region"></com.example.brian.projectrito.CustomMultilistPreference>
+    <com.example.brian.projectrito.NumberPickerPreference
+        android:key="matchHistoryLength"
+        android:title="Match History Length"
+        android:summary="The maximum number of matches shown"
+        android:defaultValue="10" />
+    <com.example.brian.projectrito.CustomMultilistPreference
+        android:defaultValue="RANKED_SOLO_5x5"
+        android:entries="@array/ModeTypes"
+        android:entryValues="@array/ModeTypesEntry"
+        android:key="gameModePreference"
+        android:summary="The types of matches you would like to see"
+        android:title="Match Type">
+
+    </com.example.brian.projectrito.CustomMultilistPreference>
+
+</PreferenceScreen>
