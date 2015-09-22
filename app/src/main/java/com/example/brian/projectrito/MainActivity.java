@@ -97,11 +97,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) { //inflates options menu
         getMenuInflater().inflate(R.menu.menu_main, menu);
         searchItem = menu.findItem(R.id.action_search);
         final android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+
         searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -121,6 +123,13 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() { //collapse search bar when keyboard is not visible
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                searchItem.collapseActionView();
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -568,7 +577,7 @@ public class MainActivity extends AppCompatActivity {
 
         RiotAPI.setLoadPolicy(LoadPolicy.UPFRONT);
         RiotAPI.setRateLimit(new RateLimit(10, 10), new RateLimit(500, 600));
-        RiotAPI.setAPIKey("YOUR API KEY");
+        RiotAPI.setAPIKey("YOUR API KEY HERE");
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
