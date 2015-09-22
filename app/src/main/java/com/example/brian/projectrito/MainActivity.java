@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     if (matchRefList == null) { //if summoner has never played a ranked game
                         Toast.makeText(MainActivity.this, "ERROR: Summoner has no ranked games played?", Toast.LENGTH_SHORT).show();
+                        if (matchHistory != null)
                         matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
                         if (prevSummoner != null) {  //resets currently shown summoner to previous valid summoner
                             summoner = prevSummoner;
@@ -226,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
         getSummonerData retrieve = new getSummonerData();
         retrieve.execute();
     }
-
 
     private class getSummonerData extends AsyncTask<Void, Void, List<Match>> { //async task for retrieving match data from API
 
@@ -549,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
 
         RiotAPI.setLoadPolicy(LoadPolicy.UPFRONT);
         RiotAPI.setRateLimit(new RateLimit(10, 10), new RateLimit(500, 600));
-        RiotAPI.setAPIKey("4fc4080e-f78b-4c10-a00d-2d75a4503a88");
+        RiotAPI.setAPIKey("YOUR API KEY");
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
