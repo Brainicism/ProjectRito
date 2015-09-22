@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -36,9 +37,6 @@ import com.robrua.orianna.type.core.league.LeagueEntry;
 import com.robrua.orianna.type.core.league.MiniSeries;
 import com.robrua.orianna.type.core.match.Match;
 import com.robrua.orianna.type.core.matchlist.MatchReference;
-import com.robrua.orianna.type.core.status.Service;
-import com.robrua.orianna.type.core.status.Shard;
-import com.robrua.orianna.type.core.status.ShardStatus;
 import com.robrua.orianna.type.core.summoner.Summoner;
 import com.robrua.orianna.type.exception.APIException;
 
@@ -68,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     public static LinearLayout summonerHeader; //header at the top of the list, displaying summoner information
     public static LinearLayout promoSeries;
     public static LinearLayout headerRankedInfo;
+    public static LinearLayout splashScreen;
     public static TextView headerSummonerName; //textview on summonerHeader, display summoner name
     public static TextView headerSummonerRank;
     public static TextView headerSummonerWL;
@@ -75,7 +74,9 @@ public class MainActivity extends AppCompatActivity {
     public static ImageView summonerRank; //image showing summoner's rank
     public static ImageView promoGame1, promoGame2, promoGame3, promoGame4, promoGame5;
     public static ListView matchHistory; //listview of matches
+    public static Button splashStart, splashSettings;
     public static SharedPreferences prefs;
+    public static MenuItem searchItem;
 
     public static Summoner summoner;
     public static League summonerLeague;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) { //inflates options menu
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchItem = menu.findItem(R.id.action_search);
         final android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
@@ -128,6 +129,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.i(TAG, "ON CREATE");
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        splashStart = (Button) findViewById(R.id.splashStartButton);
+        splashStart.setOnClickListener(new View.OnClickListener() { //expands search bar when pressed
+            @Override
+            public void onClick(View view) {
+                searchItem.expandActionView();
+            }
+        });
+        splashSettings = (Button) findViewById(R.id.splashSettingsButton);
+        splashSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, MyPreferenceActivity.class);
+                startActivity(i);
+            }
+        });
+        splashScreen = (LinearLayout) findViewById(R.id.splashScreen);
+        splashScreen.setVisibility(View.VISIBLE);
         gameModePreference = prefs.getString("gameModePreference", ""); //gets data from shared preferences
         serverRegion = prefs.getString("serverRegion", "");
         matchHistoryLength = prefs.getInt("matchHistoryLength", 0);
@@ -235,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
             if (notFirstRun) {
                 matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
             }
+            splashScreen.setVisibility(View.GONE);
         }
 
         @Override

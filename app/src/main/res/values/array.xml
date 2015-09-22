@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="ModeTypes">
+        <item>"All"</item>
         <item>"Ranked Solo 5v5"</item>
         <item>"Ranked Team 5v5</item>
         <item>"Ranked Team 3V3</item>
-        <item>"All"</item>
     </string-array>
     <string-array name="ModeTypesEntry">
+        <item>"ALL"</item>
         <item>"RANKED_SOLO_5x5"</item>
         <item>"RANKED_TEAM_5x5</item>
         <item>"RANKED_TEAM_3x3</item>
-        <item>"ALL"</item>
     </string-array>
     <string-array name="ServerRegion">
         <item>"North America"</item>
