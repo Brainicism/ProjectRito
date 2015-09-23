@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     public static LinearLayout promoSeries;
     public static LinearLayout headerRankedInfo;
     public static LinearLayout splashScreen;
-    public static TextView headerSummonerName; //textview on summonerHeader, display summoner name
+    public static AutoResizeTextView headerSummonerName; //textview on summonerHeader, display summoner name
     public static TextView headerSummonerRank;
     public static TextView headerSummonerWL;
     public static TextView headerSummonerLP;
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         Summoner prevSummoner = summoner;
         boolean summonerFound = true;
         boolean serverDown = false;
-
+        boolean invalidKey = false;
         @Override
         protected void onPreExecute() {
             hideKeyboard();
@@ -204,6 +204,10 @@ public class MainActivity extends AppCompatActivity {
                     summonerFound = false;
                     serverDown = true;
                 }
+                else if (String.valueOf(e.getStatus()).equals("UNAUTHORIZED"))
+                {
+                invalidKey = true;
+                }
             }
             try {
                 matchRefList = summoner.getMatchList();//gets summoner's ranked match list
@@ -222,7 +226,12 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             if (serverDown) { //if the API server is down
                 Toast.makeText(MainActivity.this, "API might be down", Toast.LENGTH_SHORT).show();
-            } else {
+            }
+            else if (invalidKey)
+            {
+                Toast.makeText(MainActivity.this, "Invalid API key?", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 if (!summonerFound) { //if summoner was not found (does not exist)
                     {
                         Toast.makeText(MainActivity.this, "ERROR: Summoner does not exist?", Toast.LENGTH_SHORT).show();
@@ -381,8 +390,9 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, matchPicked, Toast.LENGTH_SHORT).show();
                 }
             });
-            headerSummonerName = (TextView) findViewById(R.id.headerSummonerName);
+            headerSummonerName = (AutoResizeTextView) findViewById(R.id.headerSummonerName);
             headerSummonerName.setText(summoner.getName());
+
             headerSummonerRank = (TextView) findViewById(R.id.headerSummonerRank);
             headerSummonerRank.setText(summonerSoloRank);
             headerSummonerWL = (TextView) findViewById(R.id.headerSummonerWL);

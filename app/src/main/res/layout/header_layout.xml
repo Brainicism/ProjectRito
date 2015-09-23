@@ -7,8 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/topBanner"
@@ -35,23 +35,26 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
+
+                <com.example.brian.projectrito.AutoResizeTextView
                     android:id="@+id/headerSummonerName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_gravity="center_horizontal"
                     android:fontFamily="sans-serif-thin"
                     android:gravity="center_horizontal"
                     android:paddingTop="10dp"
-                    android:text="Large Text"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="25dp" />
+                    android:text="SummonerName"
+                    android:textSize="30sp"
+                    android:layout_weight="1" />
 
                 <LinearLayout
                     android:id="@+id/headerRankedInfo"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="2">
 
                     <View
                         android:id="@+id/divider"
@@ -145,11 +148,16 @@
                 android:src="@drawable/promo_unplayed" />
 
         </LinearLayout>
+
         <View
             android:layout_width="fill_parent"
             android:layout_height="1px"
             android:background="#adaaad" />
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 
 </LinearLayout>
