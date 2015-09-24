@@ -112,6 +112,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textSize="15sp"
                 android:gravity="right" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -245,5 +246,12 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/matchURI"
+        android:visibility="gone" />
 
 </LinearLayout>

@@ -18,6 +18,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public static ImageView summonerRank; //image showing summoner's rank
     public static ImageView promoGame1, promoGame2, promoGame3, promoGame4, promoGame5;
     public static ListView matchHistory; //listview of matches
+    public static WebView webView;
     public static Button splashStart, splashSettings;
     public static SharedPreferences prefs;
     public static MenuItem searchItem;
@@ -139,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "ON CREATE");
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         splashStart = (Button) findViewById(R.id.splashStartButton);
+
         splashStart.setOnClickListener(new View.OnClickListener() { //expands search bar when pressed
             @Override
             public void onClick(View view) {
@@ -173,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class checkValidSummoner extends AsyncTask<String, Void, Void> {
+
         Summoner prevSummoner = summoner;
         boolean summonerFound = true;
         boolean serverDown = false;
@@ -386,8 +390,11 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    String matchPicked = "You selected " + String.valueOf(adapterView.getItemAtPosition(position));
-                    Toast.makeText(MainActivity.this, matchPicked, Toast.LENGTH_SHORT).show();
+                    String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
+                    Toast.makeText(MainActivity.this, fullURL, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getBaseContext(), MatchDetailsWebView.class);
+                    intent.putExtra("matchURL", fullURL);
+                    startActivity(intent);
                 }
             });
             headerSummonerName = (AutoResizeTextView) findViewById(R.id.headerSummonerName);

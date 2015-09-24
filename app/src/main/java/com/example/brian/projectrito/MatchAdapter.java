@@ -37,8 +37,11 @@ public class MatchAdapter extends ArrayAdapter<Match> {
     private String champIconURL; //image url for champion image
     private String[] summonerSpellKey = new String[2];
     private String[] summonerSpellURL = new String[2];
+    private String matchParticipantID;
+    private String matchHistoryURL;
     private String date;
     private String queueTypeText;
+
     private Boolean win;
     private Date creationDate;
     private SimpleDateFormat dt = new SimpleDateFormat("MMMM d, yyyy");
@@ -48,6 +51,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
     private TextView matchDate;
     private TextView csText;
     private TextView queueType;
+    private TextView matchURI;
     private ImageView item0, item1, item2, item3, item4, item5, item6; //image views of each item slot
     private ImageView champImage; //image view for champion played by the summoner
     private ImageView summonerSpell1, summonerSpell2;
@@ -64,12 +68,10 @@ public class MatchAdapter extends ArrayAdapter<Match> {
     private Champion champ; //champion played by the main summoner
 
 
-
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());     //inflates layout
         View theView = inflater.inflate(R.layout.match_layout, parent, false);
-
         score = (TextView) theView.findViewById(R.id.scoreText); //gets reference to views
         championName = (TextView) theView.findViewById(R.id.championNameText);
         champImage = (ImageView) theView.findViewById(R.id.champImage);
@@ -89,6 +91,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         csText = (TextView) theView.findViewById(R.id.csText);
         matchDate = (TextView) theView.findViewById(R.id.matchDate);
         queueType = (TextView) theView.findViewById(R.id.queueType);
+        matchURI = (TextView) theView.findViewById(R.id.matchURI);
 
 
         selectedMatch = getItem(position); //gets the match based on the index on the list
@@ -119,6 +122,51 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         date = dt.format(selectedMatch.getCreation());
         summonerSpellKey[0] = summoner.getSummonerSpell1().getKey(); //gets item summoner spell keys
         summonerSpellKey[1] = summoner.getSummonerSpell2().getKey();
+        matchParticipantID = summoner.getMatchHistoryURI(); //gets the second parameter for detailed match history
+        matchParticipantID = matchParticipantID.replaceAll("[^-?0-9]+", "");
+        matchParticipantID = matchParticipantID.substring(2, matchParticipantID.length());
+        switch (MainActivity.serverRegion) {
+            case "NA": {
+                matchHistoryURL = "http://matchhistory.na.leagueoflegends.com/en/#match-details/NA1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
+                break;
+            }
+            case "KR": {
+                matchHistoryURL = "http://matchhistory.leagueoflegends.co.kr/ko/#match-details/KR/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
+                break;
+            }
+            case "EUW": {
+                matchHistoryURL = "http://matchhistory.euw.leagueoflegends.com/en/#match-details/EUW1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
+                break;
+            }
+            case "EUNE": {
+                matchHistoryURL = "http://matchhistory.eune.leagueoflegends.com/en/#match-details/EUN1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
+                break;
+            }
+            case "BR": {
+                matchHistoryURL = "http://matchhistory.br.leagueoflegends.com/pt/#match-details/BR1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
+                break;
+            }
+            case "TR": {
+                matchHistoryURL = "http://matchhistory.tr.leagueoflegends.com/tr/#match-details/TR1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
+                break;
+            }
+            case "LAS": {
+                matchHistoryURL = "http://matchhistory.las.leagueoflegends.com/es/#match-details/LA2/" + selectedMatch.getID() +"/" + matchParticipantID + "?tab=overview";
+                break;
+            }
+            case "LAN": {
+                matchHistoryURL = "http://matchhistory.lan.leagueoflegends.com/es/#match-details/LA1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
+                break;
+            }
+            case "OCE": {
+                matchHistoryURL = "http://matchhistory.oce.leagueoflegends.com/en/#match-details/OC1/"+selectedMatch.getID()+"/"+matchParticipantID+"?tab=overview";
+                break;
+            }
+
+            case "RU":
+                matchHistoryURL = "http://matchhistory.ru.leagueoflegends.com/ru/#match-details/RU/"+selectedMatch.getID()+"/"+matchParticipantID+"?tab=overview";
+                break;
+        }
 
         String correctVers;
         creationDate = selectedMatch.getCreation();
@@ -199,7 +247,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         score.setTextColor(textColor);
         championName.setText(String.valueOf(champ.getName()));
         championName.setTextColor(textColor);
-
+        matchURI.setText(matchHistoryURL);
         switch (queueTypeText) {
             case "RANKED_TEAM_5x5":
                 queueType.setText("Ranked Team 5v5");
@@ -215,4 +263,5 @@ public class MatchAdapter extends ArrayAdapter<Match> {
 
         return theView;
     }
+
 }
