@@ -42,7 +42,7 @@ public class AutoResizeTextView extends TextView {
 
     private float mSpacingAdd = 0.0f;
 
-    private float mMinTextSize = 20;
+    private float mMinTextSize = 5;
 
     private int mWidthLimit;
 
