@@ -60,6 +60,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
     private TextView goldText;
     private View divider;
     private LinearLayout goldCs;
+    private LinearLayout summonerSpellBox;
 
 
     private Match selectedMatch; //the current match on the list
@@ -92,7 +93,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         matchDate = (TextView) theView.findViewById(R.id.matchDate);
         queueType = (TextView) theView.findViewById(R.id.queueType);
         matchURI = (TextView) theView.findViewById(R.id.matchURI);
-
+        summonerSpellBox = (LinearLayout) theView.findViewById(R.id.summonerSpellBox);
 
         selectedMatch = getItem(position); //gets the match based on the index on the list
         divider = theView.findViewById(R.id.divider);
@@ -205,14 +206,12 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         Picasso.with(getContext()).load(summonerSpellURL[1]).into(summonerSpell2);
         if (MainActivity.screenRotation.equals("landscape")) { // hides/shows imageviews based on orientation of the device
             item6.setVisibility(View.VISIBLE);
-            summonerSpell1.setVisibility(View.VISIBLE);
-            summonerSpell2.setVisibility(View.VISIBLE);
+            summonerSpellBox.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
             goldCs.setVisibility(View.VISIBLE);
         } else {
             item6.setVisibility(View.GONE);
-            summonerSpell1.setVisibility(View.GONE);
-            summonerSpell2.setVisibility(View.GONE);
+            summonerSpellBox.setVisibility(View.GONE);
             divider.setVisibility(View.GONE);
             goldCs.setVisibility(View.GONE);
         }

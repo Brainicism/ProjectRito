@@ -18,7 +18,6 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -75,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
     public static ImageView summonerRank; //image showing summoner's rank
     public static ImageView promoGame1, promoGame2, promoGame3, promoGame4, promoGame5;
     public static ListView matchHistory; //listview of matches
-    public static WebView webView;
     public static Button splashStart, splashSettings;
     public static SharedPreferences prefs;
     public static MenuItem searchItem;
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
         searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(String query) { //on entry of summoner name
                 if (!isNetworkAvailable()) { //checks for internet conenction
                     Toast.makeText(MainActivity.this, "Internet?", Toast.LENGTH_SHORT).show();
                 } else {
@@ -140,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.i(TAG, "ON CREATE");
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        splashStart = (Button) findViewById(R.id.splashStartButton);
+        splashStart = (Button) findViewById(R.id.splashStartButton); //initializes splash screen
 
         splashStart.setOnClickListener(new View.OnClickListener() { //expands search bar when pressed
             @Override
@@ -162,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         serverRegion = prefs.getString("serverRegion", "");
         matchHistoryLength = prefs.getInt("matchHistoryLength", 0);
         initialAPISetup(); //updates API settings
-        bootsRemapDate();
+        bootsRemapDate(); //creates date object for boots remap
     }
 
     @Override
@@ -181,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
         boolean summonerFound = true;
         boolean serverDown = false;
         boolean invalidKey = false;
+
         @Override
         protected void onPreExecute() {
             hideKeyboard();
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (APIException e) //called when searched summoner does no exist
             {
                 Log.i("MainActivity", String.valueOf(e.getStatus()));
-                if (String.valueOf(e.getStatus()).equals("NOT_FOUND")) {
+                if (String.valueOf(e.getStatus()).equals("NOT_FOUND")) { //various possible error messages
                     Log.i(TAG, "SUMMONER NOT FOUND");
                     summoner = null;
                     summonerFound = false;
@@ -207,10 +206,8 @@ public class MainActivity extends AppCompatActivity {
                     summoner = null;
                     summonerFound = false;
                     serverDown = true;
-                }
-                else if (String.valueOf(e.getStatus()).equals("UNAUTHORIZED"))
-                {
-                invalidKey = true;
+                } else if (String.valueOf(e.getStatus()).equals("UNAUTHORIZED")) {
+                    invalidKey = true;
                 }
             }
             try {
@@ -230,12 +227,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             if (serverDown) { //if the API server is down
                 Toast.makeText(MainActivity.this, "API might be down", Toast.LENGTH_SHORT).show();
-            }
-            else if (invalidKey)
-            {
+            } else if (invalidKey) {
                 Toast.makeText(MainActivity.this, "Invalid API key?", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 if (!summonerFound) { //if summoner was not found (does not exist)
                     {
                         Toast.makeText(MainActivity.this, "ERROR: Summoner does not exist?", Toast.LENGTH_SHORT).show();
@@ -248,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                     if (matchRefList == null) { //if summoner has never played a ranked game
                         Toast.makeText(MainActivity.this, "ERROR: Summoner has no ranked games played?", Toast.LENGTH_SHORT).show();
                         if (matchHistory != null)
-                        matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
+                            matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
                         if (prevSummoner != null) {  //resets currently shown summoner to previous valid summoner
                             summoner = prevSummoner;
                             summonerName = summoner.getName();
@@ -275,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
             if (notFirstRun) {
                 matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
             }
-            splashScreen.setVisibility(View.GONE);
+            splashScreen.setVisibility(View.GONE); //hides splash screen
         }
 
         @Override
@@ -479,7 +473,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void promoWinLoss(String promoProgress) {
         if (promoProgress.length() == 3) {
-            char gameOne = promoProgress.charAt(0);
+            char gameOne = promoProgress.charAt(0); //gets w/l of promotion games
             char gameTwo = promoProgress.charAt(1);
             char gameThree = promoProgress.charAt(2);
             if (gameOne == 'W')
@@ -548,44 +542,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void initialAPISetup() {
+        //sets API settings based on server
         if (serverRegion.equals("NA")) {
-            RiotAPI.setMirror(Region.NA); //sets API settings
+            RiotAPI.setMirror(Region.NA);
             RiotAPI.setRegion(Region.NA);
             Log.i(TAG, "set up na");
         } else if (serverRegion.equals("KR")) {
-            RiotAPI.setMirror(Region.KR); //sets API settings
+            RiotAPI.setMirror(Region.KR);
             RiotAPI.setRegion(Region.KR);
             Log.i(TAG, "set up KR");
         } else if (serverRegion.equals("EUW")) {
-            RiotAPI.setMirror(Region.EUW); //sets API settings
+            RiotAPI.setMirror(Region.EUW);
             RiotAPI.setRegion(Region.EUW);
             Log.i(TAG, "set up EUW");
         } else if (serverRegion.equals("EUNE")) {
-            RiotAPI.setMirror(Region.EUNE); //sets API settings
+            RiotAPI.setMirror(Region.EUNE);
             RiotAPI.setRegion(Region.EUNE);
             Log.i(TAG, "set up EUNE");
         } else if (serverRegion.equals("BR")) {
-            RiotAPI.setMirror(Region.BR); //sets API settings
+            RiotAPI.setMirror(Region.BR);
             RiotAPI.setRegion(Region.BR);
             Log.i(TAG, "set up BR");
         } else if (serverRegion.equals("TR")) {
-            RiotAPI.setMirror(Region.TR); //sets API settings
+            RiotAPI.setMirror(Region.TR);
             RiotAPI.setRegion(Region.TR);
             Log.i(TAG, "set up TR");
         } else if (serverRegion.equals("LAS")) {
-            RiotAPI.setMirror(Region.LAS); //sets API settings
+            RiotAPI.setMirror(Region.LAS);
             RiotAPI.setRegion(Region.LAS);
             Log.i(TAG, "set up LAS");
         } else if (serverRegion.equals("LAN")) {
-            RiotAPI.setMirror(Region.LAN); //sets API settings
+            RiotAPI.setMirror(Region.LAN);
             RiotAPI.setRegion(Region.LAN);
             Log.i(TAG, "set up LAN");
         } else if (serverRegion.equals("OCE")) {
-            RiotAPI.setMirror(Region.OCE); //sets API settings
+            RiotAPI.setMirror(Region.OCE);
             RiotAPI.setRegion(Region.OCE);
             Log.i(TAG, "set up OCE");
         } else if (serverRegion.equals("RU")) {
-            RiotAPI.setMirror(Region.RU); //sets API settings
+            RiotAPI.setMirror(Region.RU);
             RiotAPI.setRegion(Region.RU);
             Log.i(TAG, "set up RU");
         } else {
@@ -596,6 +591,7 @@ public class MainActivity extends AppCompatActivity {
         RiotAPI.setRateLimit(new RateLimit(10, 10), new RateLimit(500, 600));
         RiotAPI.setAPIKey("YOUR API KEY HERE");
     }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -605,64 +601,93 @@ public class MainActivity extends AppCompatActivity {
 
     public static int getRankResource(String rank) { //returns appropriate image for summoner's rank
         switch (rank) {
-            case "UNRANKED":
+            case "UNRANKED": {
                 return R.drawable.provisional;
-            case "BRONZE V":
+            }
+            case "BRONZE V": {
                 return R.drawable.bronze_v;
-            case "BRONZE IV":
+            }
+            case "BRONZE IV": {
                 return R.drawable.bronze_iv;
-            case "BRONZE III":
+            }
+            case "BRONZE III": {
                 return R.drawable.bronze_iii;
-            case "BRONZE II":
+            }
+            case "BRONZE II": {
                 return R.drawable.bronze_ii;
-            case "BRONZE I":
+            }
+            case "BRONZE I": {
                 return R.drawable.bronze_i;
-            case "SILVER V":
+            }
+            case "SILVER V": {
                 return R.drawable.silver_v;
-            case "SILVER IV":
+            }
+            case "SILVER IV": {
                 return R.drawable.silver_iv;
-            case "SILVER III":
+            }
+            case "SILVER III": {
                 return R.drawable.silver_iii;
-            case "SILVER II":
+            }
+            case "SILVER II": {
                 return R.drawable.silver_ii;
-            case "SILVER I":
+            }
+            case "SILVER I": {
                 return R.drawable.silver_i;
-            case "GOLD V":
+            }
+            case "GOLD V": {
                 return R.drawable.gold_v;
-            case "GOLD IV":
+            }
+            case "GOLD IV": {
                 return R.drawable.gold_iv;
-            case "GOLD III":
+            }
+            case "GOLD III": {
                 return R.drawable.gold_iii;
-            case "GOLD II":
+            }
+            case "GOLD II": {
                 return R.drawable.gold_ii;
-            case "GOLD I":
+            }
+            case "GOLD I": {
                 return R.drawable.gold_i;
-            case "PLATINUM V":
+            }
+            case "PLATINUM V": {
                 return R.drawable.platinum_v;
-            case "PLATINUM IV":
+            }
+            case "PLATINUM IV": {
                 return R.drawable.platinum_iv;
-            case "PLATINUM III":
+            }
+            case "PLATINUM III": {
                 return R.drawable.platinum_iii;
-            case "PLATINUM II":
+            }
+            case "PLATINUM II": {
                 return R.drawable.platinum_ii;
-            case "PLATINUM I":
+            }
+            case "PLATINUM I": {
                 return R.drawable.platinum_i;
-            case "DIAMOND V":
+            }
+            case "DIAMOND V": {
                 return R.drawable.diamond_v;
-            case "DIAMOND IV":
+            }
+            case "DIAMOND IV": {
                 return R.drawable.diamond_iv;
-            case "DIAMOND III":
+            }
+            case "DIAMOND III": {
                 return R.drawable.diamond_iii;
-            case "DIAMOND II":
+            }
+            case "DIAMOND II": {
                 return R.drawable.diamond_ii;
-            case "DIAMOND I":
+            }
+            case "DIAMOND I": {
                 return R.drawable.diamond_i;
-            case "MASTER I":
+            }
+            case "MASTER I": {
                 return R.drawable.master;
-            case "CHALLENGER I":
+            }
+            case "CHALLENGER I": {
                 return R.drawable.challenger;
-            default:
+            }
+            default: {
                 return R.drawable.unranked;
+            }
         }
     }
 }
