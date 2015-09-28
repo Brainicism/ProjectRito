@@ -92,6 +92,15 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings: // intents to preference activity
                 Intent i = new Intent(this, MyPreferenceActivity.class);
                 startActivity(i);
+            case R.id.refresh_button:
+            {
+                if (notFirstRun) //if a summoner has already done a search
+                {
+                    checkValidSummoner check = new checkValidSummoner();
+                    check.execute();
+                }
+
+            }
             default:
                 return true;
         }
@@ -103,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         searchItem = menu.findItem(R.id.action_search);
         final android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
-
         searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) { //on entry of summoner name
