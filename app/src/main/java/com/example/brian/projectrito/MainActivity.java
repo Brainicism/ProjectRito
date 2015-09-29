@@ -49,7 +49,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    public static final String apiKey = "YOUR API KEY HERE";
     public static int matchHistoryLength;
     public static int summonerLP;
     public static String summonerName = "";
@@ -92,14 +92,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings: // intents to preference activity
                 Intent i = new Intent(this, MyPreferenceActivity.class);
                 startActivity(i);
-            case R.id.refresh_button:
-            {
+            case R.id.refresh_button: {
                 if (notFirstRun) //if a summoner has already done a search
                 {
                     checkValidSummoner check = new checkValidSummoner();
                     check.execute();
                 }
-
             }
             default:
                 return true;
@@ -147,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "ON CREATE");
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         splashStart = (Button) findViewById(R.id.splashStartButton); //initializes splash screen
-
         splashStart.setOnClickListener(new View.OnClickListener() { //expands search bar when pressed
             @Override
             public void onClick(View view) {
@@ -164,9 +161,9 @@ public class MainActivity extends AppCompatActivity {
         });
         splashScreen = (LinearLayout) findViewById(R.id.splashScreen);
         splashScreen.setVisibility(View.VISIBLE);
-        gameModePreference = prefs.getString("gameModePreference", ""); //gets data from shared preferences
-        serverRegion = prefs.getString("serverRegion", "");
-        matchHistoryLength = prefs.getInt("matchHistoryLength", 0);
+        gameModePreference = prefs.getString("gameModePreference", "ALL"); //gets data from shared preferences
+        serverRegion = prefs.getString("serverRegion", "NA");
+        matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
         initialAPISetup(); //updates API settings
         bootsRemapDate(); //creates date object for boots remap
     }
@@ -192,9 +189,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             hideKeyboard();
             screenRotation = getRotation(getBaseContext());
-            gameModePreference = prefs.getString("gameModePreference", ""); //gets data from shared preferences
-            serverRegion = prefs.getString("serverRegion", "");
-            matchHistoryLength = prefs.getInt("matchHistoryLength", 0);
+            gameModePreference = prefs.getString("gameModePreference", "ALL"); //gets data from shared preferences
+            serverRegion = prefs.getString("serverRegion", "NA");
+            matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
             initialAPISetup(); //updates API settings
         }
 
@@ -285,46 +282,57 @@ public class MainActivity extends AppCompatActivity {
             cleanedRefList.clear();
             currentRealmsVer = BaseRiotAPI.getRealm().getV(); //gets current version of ddragon server
             int matchesFound = 0; //count of how many matches of the specified game mode is found
-            if (gameModePreference.equals("RANKED_SOLO_5x5")) { //selectively gathers matches based on queue type
-                for (int i = 0; i < matchRefList.size(); i++) {
+            Log.i("MainActivity", String.valueOf(matchHistoryLength));
+            switch (gameModePreference) {
+                case "RANKED_SOLO_5x5": {
+                    for (int i = 0; i < matchRefList.size(); i++) {
 
-                    if (matchesFound >= matchHistoryLength) //if match history length is met
-                        break;
-                    if (matchRefList.get(i).getQueueType().toString().equals("RANKED_SOLO_5x5")) {
-                        cleanedRefList.add(matchRefList.get(i));
-                        Log.i(TAG, matchRefList.get(i).getQueueType().toString());
-                        matchesFound++;
+                        if (matchesFound >= matchHistoryLength) //if match history length is met
+                            break;
+                        if (matchRefList.get(i).getQueueType().toString().equals("RANKED_SOLO_5x5")) {
+                            cleanedRefList.add(matchRefList.get(i));
+                            Log.i(TAG, matchRefList.get(i).getQueueType().toString());
+                            matchesFound++;
+                        }
                     }
+                    break;
                 }
-            } else if (gameModePreference.equals("RANKED_TEAM_5x5")) {
-                for (int i = 0; i < matchRefList.size(); i++) {
-                    if (matchesFound >= matchHistoryLength)
-                        break;
-                    if (matchRefList.get(i).getQueueType().toString().equals("RANKED_TEAM_5x5")) {
-                        cleanedRefList.add(matchRefList.get(i));
-                        Log.i(TAG, matchRefList.get(i).getQueueType().toString());
-                        matchesFound++;
+                case "RANKED_TEAM_5x5": {
+                    for (int i = 0; i < matchRefList.size(); i++) {
+                        if (matchesFound >= matchHistoryLength)
+                            break;
+                        if (matchRefList.get(i).getQueueType().toString().equals("RANKED_TEAM_5x5")) {
+                            cleanedRefList.add(matchRefList.get(i));
+                            Log.i(TAG, matchRefList.get(i).getQueueType().toString());
+                            matchesFound++;
+                        }
                     }
+                    break;
                 }
-            } else if (gameModePreference.equals("RANKED_TEAM_3x3")) {
-                for (int i = 0; i < matchRefList.size(); i++) {
-                    if (matchesFound >= matchHistoryLength)
-                        break;
+                case "RANKED_TEAM_3x3": {
+                    for (int i = 0; i < matchRefList.size(); i++) {
+                        if (matchesFound >= matchHistoryLength)
+                            break;
 
-                    if (matchRefList.get(i).getQueueType().toString().equals("RANKED_TEAM_3x3")) {
+                        if (matchRefList.get(i).getQueueType().toString().equals("RANKED_TEAM_3x3")) {
+                            cleanedRefList.add(matchRefList.get(i));
+                            Log.i(TAG, matchRefList.get(i).getQueueType().toString());
+                            matchesFound++;
+                        }
+                    }
+                    break;
+                }
+                case "ALL": {
+                    for (int i = 0; i < matchRefList.size(); i++) {
+                        if (matchesFound >= matchHistoryLength)
+                            break;
                         cleanedRefList.add(matchRefList.get(i));
-                        Log.i(TAG, matchRefList.get(i).getQueueType().toString());
                         matchesFound++;
                     }
-                }
-            } else if (gameModePreference.equals("ALL")) {
-                for (int i = 0; i < matchRefList.size(); i++) {
-                    if (matchesFound >= matchHistoryLength)
-                        break;
-                    cleanedRefList.add(matchRefList.get(i));
-                    matchesFound++;
+                    break;
                 }
             }
+
             matchList = new ArrayList<>();
             matchList.clear();
             for (int i = 0; i < cleanedRefList.size(); i++) //converts match reference objects to match objects
@@ -373,6 +381,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "User has no games of Ranked Team 5v5 played. Try switching game mode preference", Toast.LENGTH_LONG).show();
                     case "RANKED_TEAM_3x3":
                         Toast.makeText(MainActivity.this, "User has no games of Ranked Team 3v3 played. Try switching game mode preference", Toast.LENGTH_LONG).show();
+
                 }
 
             }
@@ -551,53 +560,79 @@ public class MainActivity extends AppCompatActivity {
 
     public static void initialAPISetup() {
         //sets API settings based on server
-        if (serverRegion.equals("NA")) {
-            RiotAPI.setMirror(Region.NA);
-            RiotAPI.setRegion(Region.NA);
-            Log.i(TAG, "set up na");
-        } else if (serverRegion.equals("KR")) {
-            RiotAPI.setMirror(Region.KR);
-            RiotAPI.setRegion(Region.KR);
-            Log.i(TAG, "set up KR");
-        } else if (serverRegion.equals("EUW")) {
-            RiotAPI.setMirror(Region.EUW);
-            RiotAPI.setRegion(Region.EUW);
-            Log.i(TAG, "set up EUW");
-        } else if (serverRegion.equals("EUNE")) {
-            RiotAPI.setMirror(Region.EUNE);
-            RiotAPI.setRegion(Region.EUNE);
-            Log.i(TAG, "set up EUNE");
-        } else if (serverRegion.equals("BR")) {
-            RiotAPI.setMirror(Region.BR);
-            RiotAPI.setRegion(Region.BR);
-            Log.i(TAG, "set up BR");
-        } else if (serverRegion.equals("TR")) {
-            RiotAPI.setMirror(Region.TR);
-            RiotAPI.setRegion(Region.TR);
-            Log.i(TAG, "set up TR");
-        } else if (serverRegion.equals("LAS")) {
-            RiotAPI.setMirror(Region.LAS);
-            RiotAPI.setRegion(Region.LAS);
-            Log.i(TAG, "set up LAS");
-        } else if (serverRegion.equals("LAN")) {
-            RiotAPI.setMirror(Region.LAN);
-            RiotAPI.setRegion(Region.LAN);
-            Log.i(TAG, "set up LAN");
-        } else if (serverRegion.equals("OCE")) {
-            RiotAPI.setMirror(Region.OCE);
-            RiotAPI.setRegion(Region.OCE);
-            Log.i(TAG, "set up OCE");
-        } else if (serverRegion.equals("RU")) {
-            RiotAPI.setMirror(Region.RU);
-            RiotAPI.setRegion(Region.RU);
-            Log.i(TAG, "set up RU");
-        } else {
-            Log.i(TAG, "Invalid server");
+        switch (serverRegion) {
+            case "NA": {
+                RiotAPI.setMirror(Region.NA);
+                RiotAPI.setRegion(Region.NA);
+                Log.i(TAG, "set up na");
+                break;
+            }
+            case "KR": {
+                RiotAPI.setMirror(Region.KR);
+                RiotAPI.setRegion(Region.KR);
+                Log.i(TAG, "set up KR");
+                break;
+            }
+            case "EUW": {
+                RiotAPI.setMirror(Region.EUW);
+                RiotAPI.setRegion(Region.EUW);
+                Log.i(TAG, "set up EUW");
+                break;
+            }
+            case "EUNE": {
+                RiotAPI.setMirror(Region.EUNE);
+                RiotAPI.setRegion(Region.EUNE);
+                Log.i(TAG, "set up EUNE");
+                break;
+            }
+            case "BR": {
+                RiotAPI.setMirror(Region.BR);
+                RiotAPI.setRegion(Region.BR);
+                Log.i(TAG, "set up BR");
+                break;
+            }
+            case "TR": {
+                RiotAPI.setMirror(Region.TR);
+                RiotAPI.setRegion(Region.TR);
+                Log.i(TAG, "set up TR");
+                break;
+            }
+            case "LAS": {
+                RiotAPI.setMirror(Region.LAS);
+                RiotAPI.setRegion(Region.LAS);
+                Log.i(TAG, "set up LAS");
+                break;
+            }
+            case "LAN": {
+                RiotAPI.setMirror(Region.LAN);
+                RiotAPI.setRegion(Region.LAN);
+                Log.i(TAG, "set up LAN");
+                break;
+            }
+            case "OCE": {
+                RiotAPI.setMirror(Region.OCE);
+                RiotAPI.setRegion(Region.OCE);
+                Log.i(TAG, "set up OCE");
+                break;
+            }
+            case "RU": {
+                RiotAPI.setMirror(Region.RU);
+                RiotAPI.setRegion(Region.RU);
+                Log.i(TAG, "set up RU");
+                break;
+            }
+            default: {
+                RiotAPI.setMirror(Region.NA);
+                RiotAPI.setRegion(Region.NA);
+                Log.i(TAG, "unknown server, using NA");
+                break;
+            }
         }
+
 
         RiotAPI.setLoadPolicy(LoadPolicy.UPFRONT);
         RiotAPI.setRateLimit(new RateLimit(10, 10), new RateLimit(500, 600));
-        RiotAPI.setAPIKey("YOUR API KEY HERE");
+        RiotAPI.setAPIKey(apiKey);
     }
 
     private boolean isNetworkAvailable() {
