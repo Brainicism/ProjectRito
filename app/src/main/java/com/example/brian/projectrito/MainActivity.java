@@ -402,7 +402,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                     String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
-                    Toast.makeText(MainActivity.this, fullURL, Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getBaseContext(), MatchDetailsWebView.class);
                     intent.putExtra("matchURL", fullURL);
                     startActivity(intent);

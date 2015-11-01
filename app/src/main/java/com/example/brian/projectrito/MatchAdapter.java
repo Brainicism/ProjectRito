@@ -111,7 +111,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         assists = summoner.getStats().getAssists();
         summonerGold = (double) summoner.getStats().getGoldEarned();
         summonerGold = ((double) Math.round(summonerGold / 1000 * 10)) / 10;
-        cs = summoner.getStats().getMinionsKilled();
+        cs = summoner.getStats().getMinionsKilled() + summoner.getStats().getNeutralMinionsKilledEnemyJungle() + summoner.getStats().getNeutralMinionsKilledTeamJungle();
         queueTypeText = String.valueOf(selectedMatch.getQueueType());
         itemID[0] = summoner.getStats().getItem0ID(); //gets item id's
         itemID[1] = summoner.getStats().getItem1ID();
