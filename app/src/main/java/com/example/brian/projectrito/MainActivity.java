@@ -40,16 +40,12 @@ import com.robrua.orianna.type.core.matchlist.MatchReference;
 import com.robrua.orianna.type.core.summoner.Summoner;
 import com.robrua.orianna.type.exception.APIException;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String apiKey = "YOUR API KEY HERE";
+    public static final String apiKey = "ENTER API KEY HERE";
     public static int matchHistoryLength;
     public static int summonerLP;
     public static String summonerName = "";
@@ -60,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
     public static String gameModePreference, serverRegion;
     public static final String TAG = MainActivity.class.getName();
     public boolean notFirstRun = false;
-    public static Date bootRemap;
 
     public static ListAdapter listAdapter; //array adapter for list of matches
     public static LinearLayout summonerHeader; //header at the top of the list, displaying summoner information
@@ -85,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     public static List<MatchReference> matchRefList;
     public static List<MatchReference> cleanedRefList = new ArrayList<>();
     public static List<Match> matchList;
+    public static List<String> versionsList;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -165,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
         serverRegion = prefs.getString("serverRegion", "NA");
         matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
         initialAPISetup(); //updates API settings
-        bootsRemapDate(); //creates date object for boots remap
     }
 
     @Override
@@ -282,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
             cleanedRefList.clear();
             currentRealmsVer = BaseRiotAPI.getRealm().getV(); //gets current version of ddragon server
             int matchesFound = 0; //count of how many matches of the specified game mode is found
+            versionsList = BaseRiotAPI.getVersions();
             Log.i("MainActivity", String.valueOf(matchHistoryLength));
             switch (gameModePreference) {
                 case "RANKED_SOLO_5x5": {
@@ -337,8 +333,14 @@ public class MainActivity extends AppCompatActivity {
             matchList.clear();
             for (int i = 0; i < cleanedRefList.size(); i++) //converts match reference objects to match objects
             {
-                Log.i(TAG, String.valueOf(cleanedRefList.get(i).getMatch().getID()) + " " + String.valueOf(i));
-                matchList.add(cleanedRefList.get(i).getMatch());
+                //Log.i(TAG, String.valueOf(cleanedRefList.get(i).getMatch().getID()) + " " + String.valueOf(i));
+                try {
+                    matchList.add(cleanedRefList.get(i).getMatch());
+                }
+                catch(APIException e){
+                    Log.i("HELLO",Long.toString(cleanedRefList.get(i).getID()));
+                    e.printStackTrace();
+                }
             }
             List<League> listLeague = new ArrayList<>();
             try {
@@ -474,16 +476,6 @@ public class MainActivity extends AppCompatActivity {
         if (view != null) {
             InputMethodManager inputManager = (InputMethodManager) this.getSystemService(getBaseContext().INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
-
-    private void bootsRemapDate() { //creates date object for when enchanted boot id's were changed
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dateString = " 2015-07-07";
-        try {
-            bootRemap = sdf.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
     }
 

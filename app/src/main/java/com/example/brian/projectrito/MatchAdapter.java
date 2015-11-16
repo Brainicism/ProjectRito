@@ -15,8 +15,6 @@ import com.robrua.orianna.type.core.match.Participant;
 import com.robrua.orianna.type.core.staticdata.Champion;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 
@@ -41,10 +39,9 @@ public class MatchAdapter extends ArrayAdapter<Match> {
     private String matchHistoryURL;
     private String date;
     private String queueTypeText;
+    String correctVers;
 
     private Boolean win;
-    private Date creationDate;
-    private SimpleDateFormat dt = new SimpleDateFormat("MMMM d, yyyy");
 
     private TextView championName; //text view for the summoner's played champ
     private TextView score;  //text view for the summoner's kda
@@ -73,6 +70,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());     //inflates layout
         View theView = inflater.inflate(R.layout.match_layout, parent, false);
+
         score = (TextView) theView.findViewById(R.id.scoreText); //gets reference to views
         championName = (TextView) theView.findViewById(R.id.championNameText);
         champImage = (ImageView) theView.findViewById(R.id.champImage);
@@ -94,7 +92,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         queueType = (TextView) theView.findViewById(R.id.queueType);
         matchURI = (TextView) theView.findViewById(R.id.matchURI);
         summonerSpellBox = (LinearLayout) theView.findViewById(R.id.summonerSpellBox);
-
         selectedMatch = getItem(position); //gets the match based on the index on the list
         divider = theView.findViewById(R.id.divider);
         listOfParticipants = selectedMatch.getParticipants(); //gets a list of the participants in the match
@@ -117,15 +114,28 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         itemID[1] = summoner.getStats().getItem1ID();
         itemID[2] = summoner.getStats().getItem2ID();
         itemID[3] = summoner.getStats().getItem3ID();
+
         itemID[4] = summoner.getStats().getItem4ID();
+
         itemID[5] = summoner.getStats().getItem5ID();
         itemID[6] = summoner.getStats().getItem6ID();
-        date = dt.format(selectedMatch.getCreation());
         summonerSpellKey[0] = summoner.getSummonerSpell1().getKey(); //gets item summoner spell keys
         summonerSpellKey[1] = summoner.getSummonerSpell2().getKey();
         matchParticipantID = summoner.getMatchHistoryURI(); //gets the second parameter for detailed match history
         matchParticipantID = matchParticipantID.replaceAll("[^-?0-9]+", "");
         matchParticipantID = matchParticipantID.substring(2, matchParticipantID.length());
+
+        int currentCutoff = selectedMatch.getVersion().indexOf(".",selectedMatch.getVersion().indexOf(".")+1);
+        for (int i = 0; i < MainActivity.versionsList.size(); i ++){
+            //  "5.13.1" realms
+            // "4.15.0.238" current
+            int cutoff = MainActivity.versionsList.get(i).indexOf(".", MainActivity.versionsList.get(0).indexOf(".") + 1); //cutoff for realms version number
+            if (MainActivity.versionsList.get(i).substring(0,cutoff).equals(selectedMatch.getVersion().substring(0,currentCutoff))){
+                correctVers = MainActivity.versionsList.get(i);
+                break;
+            }
+        }
+
         switch (MainActivity.serverRegion) {
             case "NA": {
                 matchHistoryURL = "http://matchhistory.na.leagueoflegends.com/en/#match-details/NA1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
@@ -169,13 +179,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 break;
         }
 
-        String correctVers;
-        creationDate = selectedMatch.getCreation();
-        if (creationDate.before(MainActivity.bootRemap)) { //changes realms version to show enchanted boots for matches pre 5.13 patch
-            correctVers = "5.12.1";
-        } else {
-            correctVers = MainActivity.currentRealmsVer;
-        }
 
         itemURL[0] = "http://ddragon.leagueoflegends.com/cdn/" + correctVers + "/img/item/" + itemID[0] + ".png"; //gets image urls
         itemURL[1] = "http://ddragon.leagueoflegends.com/cdn/" + correctVers + "/img/item/" + itemID[1] + ".png";
@@ -194,6 +197,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 itemURL[i] = "http://i.imgur.com/M3e1IqG.png"; //shows empty item slot
             }
         }
+
 
         Picasso.with(getContext()).load(itemURL[0]).into(item0); //loads image url's into image views
         Picasso.with(getContext()).load(itemURL[1]).into(item1);
