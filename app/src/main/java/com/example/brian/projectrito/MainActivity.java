@@ -45,7 +45,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String apiKey = "ENTER API KEY HERE";
+    public static final String apiKey = "YOUR API KEY HERE";
     public static int matchHistoryLength;
     public static int summonerLP;
     public static String summonerName = "";
@@ -227,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             if (serverDown) { //if the API server is down
                 Toast.makeText(MainActivity.this, "API might be down", Toast.LENGTH_SHORT).show();
+                serverDown = false;
             } else if (invalidKey) {
                 Toast.makeText(MainActivity.this, "Invalid API key?", Toast.LENGTH_SHORT).show();
             } else {
@@ -287,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         if (matchRefList.get(i).getQueueType().toString().equals("RANKED_SOLO_5x5")) {
                             cleanedRefList.add(matchRefList.get(i));
-                            Log.i(TAG, matchRefList.get(i).getQueueType().toString());
                             matchesFound++;
                         }
                     }
@@ -333,14 +333,7 @@ public class MainActivity extends AppCompatActivity {
             matchList.clear();
             for (int i = 0; i < cleanedRefList.size(); i++) //converts match reference objects to match objects
             {
-                //Log.i(TAG, String.valueOf(cleanedRefList.get(i).getMatch().getID()) + " " + String.valueOf(i));
-                try {
-                    matchList.add(cleanedRefList.get(i).getMatch());
-                }
-                catch(APIException e){
-                    Log.i("HELLO",Long.toString(cleanedRefList.get(i).getID()));
-                    e.printStackTrace();
-                }
+                matchList.add(cleanedRefList.get(i).getMatch());
             }
             List<League> listLeague = new ArrayList<>();
             try {
@@ -553,67 +546,56 @@ public class MainActivity extends AppCompatActivity {
         //sets API settings based on server
         switch (serverRegion) {
             case "NA": {
-                RiotAPI.setMirror(Region.NA);
                 RiotAPI.setRegion(Region.NA);
                 Log.i(TAG, "set up na");
                 break;
             }
             case "KR": {
-                RiotAPI.setMirror(Region.KR);
                 RiotAPI.setRegion(Region.KR);
                 Log.i(TAG, "set up KR");
                 break;
             }
             case "EUW": {
-                RiotAPI.setMirror(Region.EUW);
                 RiotAPI.setRegion(Region.EUW);
                 Log.i(TAG, "set up EUW");
                 break;
             }
             case "EUNE": {
-                RiotAPI.setMirror(Region.EUNE);
                 RiotAPI.setRegion(Region.EUNE);
                 Log.i(TAG, "set up EUNE");
                 break;
             }
             case "BR": {
-                RiotAPI.setMirror(Region.BR);
                 RiotAPI.setRegion(Region.BR);
                 Log.i(TAG, "set up BR");
                 break;
             }
             case "TR": {
-                RiotAPI.setMirror(Region.TR);
                 RiotAPI.setRegion(Region.TR);
                 Log.i(TAG, "set up TR");
                 break;
             }
             case "LAS": {
-                RiotAPI.setMirror(Region.LAS);
                 RiotAPI.setRegion(Region.LAS);
                 Log.i(TAG, "set up LAS");
                 break;
             }
             case "LAN": {
-                RiotAPI.setMirror(Region.LAN);
                 RiotAPI.setRegion(Region.LAN);
                 Log.i(TAG, "set up LAN");
                 break;
             }
             case "OCE": {
-                RiotAPI.setMirror(Region.OCE);
                 RiotAPI.setRegion(Region.OCE);
                 Log.i(TAG, "set up OCE");
                 break;
             }
             case "RU": {
-                RiotAPI.setMirror(Region.RU);
                 RiotAPI.setRegion(Region.RU);
                 Log.i(TAG, "set up RU");
                 break;
             }
             default: {
-                RiotAPI.setMirror(Region.NA);
                 RiotAPI.setRegion(Region.NA);
                 Log.i(TAG, "unknown server, using NA");
                 break;
