@@ -15,6 +15,7 @@ import com.robrua.orianna.type.core.match.Participant;
 import com.robrua.orianna.type.core.staticdata.Champion;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -40,7 +41,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
     private String date;
     private String queueTypeText;
     String correctVers;
-
+    private SimpleDateFormat dt = new SimpleDateFormat("MMMM d, yyyy");
     private Boolean win;
 
     private TextView championName; //text view for the summoner's played champ
@@ -114,9 +115,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         itemID[1] = summoner.getStats().getItem1ID();
         itemID[2] = summoner.getStats().getItem2ID();
         itemID[3] = summoner.getStats().getItem3ID();
-
         itemID[4] = summoner.getStats().getItem4ID();
-
         itemID[5] = summoner.getStats().getItem5ID();
         itemID[6] = summoner.getStats().getItem6ID();
         summonerSpellKey[0] = summoner.getSummonerSpell1().getKey(); //gets item summoner spell keys
@@ -125,12 +124,10 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         matchParticipantID = matchParticipantID.replaceAll("[^-?0-9]+", "");
         matchParticipantID = matchParticipantID.substring(2, matchParticipantID.length());
 
-        int currentCutoff = selectedMatch.getVersion().indexOf(".",selectedMatch.getVersion().indexOf(".")+1);
-        for (int i = 0; i < MainActivity.versionsList.size(); i ++){
-            //  "5.13.1" realms
-            // "4.15.0.238" current
+        int currentCutoff = selectedMatch.getVersion().indexOf(".", selectedMatch.getVersion().indexOf(".") + 1);
+        for (int i = 0; i < MainActivity.versionsList.size(); i++) {
             int cutoff = MainActivity.versionsList.get(i).indexOf(".", MainActivity.versionsList.get(0).indexOf(".") + 1); //cutoff for realms version number
-            if (MainActivity.versionsList.get(i).substring(0,cutoff).equals(selectedMatch.getVersion().substring(0,currentCutoff))){
+            if (MainActivity.versionsList.get(i).substring(0, cutoff).equals(selectedMatch.getVersion().substring(0, currentCutoff))) {
                 correctVers = MainActivity.versionsList.get(i);
                 break;
             }
@@ -162,7 +159,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 break;
             }
             case "LAS": {
-                matchHistoryURL = "http://matchhistory.las.leagueoflegends.com/es/#match-details/LA2/" + selectedMatch.getID() +"/" + matchParticipantID + "?tab=overview";
+                matchHistoryURL = "http://matchhistory.las.leagueoflegends.com/es/#match-details/LA2/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
                 break;
             }
             case "LAN": {
@@ -170,12 +167,12 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 break;
             }
             case "OCE": {
-                matchHistoryURL = "http://matchhistory.oce.leagueoflegends.com/en/#match-details/OC1/"+selectedMatch.getID()+"/"+matchParticipantID+"?tab=overview";
+                matchHistoryURL = "http://matchhistory.oce.leagueoflegends.com/en/#match-details/OC1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
                 break;
             }
 
             case "RU":
-                matchHistoryURL = "http://matchhistory.ru.leagueoflegends.com/ru/#match-details/RU/"+selectedMatch.getID()+"/"+matchParticipantID+"?tab=overview";
+                matchHistoryURL = "http://matchhistory.ru.leagueoflegends.com/ru/#match-details/RU/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
                 break;
         }
 
@@ -244,6 +241,8 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         }
         goldText.setText(String.valueOf(summonerGold) + "k");
         goldText.setTextColor(textColor);
+        date = dt.format(selectedMatch.getCreation());
+
         matchDate.setText(date);
         csText.setText(String.valueOf(cs));
         csText.setTextColor(textColor);
