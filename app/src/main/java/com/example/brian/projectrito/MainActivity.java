@@ -27,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.robrua.orianna.api.core.MatchAPI;
 import com.robrua.orianna.api.core.RiotAPI;
 import com.robrua.orianna.api.dto.BaseRiotAPI;
 import com.robrua.orianna.type.api.LoadPolicy;
@@ -211,7 +212,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             try {
+                Log.i("MainActivity", "Begin retrieving match list");
                 matchRefList = summoner.getMatchList();//gets summoner's ranked match list
+                Log.i("MainActivity", "Done getting match list; length of " + matchRefList.size());
+
             } catch (NullPointerException e) { //catches exception when summoner has no matches played
                 e.printStackTrace();
                 matchRefList = null;
@@ -279,11 +283,9 @@ public class MainActivity extends AppCompatActivity {
             currentRealmsVer = BaseRiotAPI.getRealm().getV(); //gets current version of ddragon server
             int matchesFound = 0; //count of how many matches of the specified game mode is found
             versionsList = BaseRiotAPI.getVersions();
-            Log.i("MainActivity", String.valueOf(matchHistoryLength));
             switch (gameModePreference) {
                 case "RANKED_SOLO_5x5": {
                     for (int i = 0; i < matchRefList.size(); i++) {
-
                         if (matchesFound >= matchHistoryLength) //if match history length is met
                             break;
                         if (matchRefList.get(i).getQueueType().toString().equals("RANKED_SOLO_5x5")) {
@@ -331,10 +333,11 @@ public class MainActivity extends AppCompatActivity {
 
             matchList = new ArrayList<>();
             matchList.clear();
-            for (int i = 0; i < cleanedRefList.size(); i++) //converts match reference objects to match objects
-            {
-                matchList.add(cleanedRefList.get(i).getMatch());
-            }
+            Log.i("MainActivity", "Converting match references to match objects");
+            if (cleanedRefList.size()>0)
+            matchList = MatchAPI.getMatchesByReference(cleanedRefList);
+            Log.i("MainActivity", "Converted match references to match objects");
+
             List<League> listLeague = new ArrayList<>();
             try {
                 listLeague = summoner.getLeagueEntries(); //gets the user's leagues
@@ -381,7 +384,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
             listAdapter = new MatchAdapter(MainActivity.this, changedMatches); //creates list adapter for the array of matches
-
             matchHistory = (ListView) findViewById(R.id.matchHistoryList);
             matchHistory.setVisibility(View.VISIBLE); //unhides the match history view
 
@@ -392,6 +394,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             matchHistory.setAdapter(listAdapter); //sets the array adapter to the match history list view
+
             matchHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() { //detects on click on a specific item
 
                 @Override
@@ -547,52 +550,42 @@ public class MainActivity extends AppCompatActivity {
         switch (serverRegion) {
             case "NA": {
                 RiotAPI.setRegion(Region.NA);
-                Log.i(TAG, "set up na");
                 break;
             }
             case "KR": {
                 RiotAPI.setRegion(Region.KR);
-                Log.i(TAG, "set up KR");
                 break;
             }
             case "EUW": {
                 RiotAPI.setRegion(Region.EUW);
-                Log.i(TAG, "set up EUW");
                 break;
             }
             case "EUNE": {
                 RiotAPI.setRegion(Region.EUNE);
-                Log.i(TAG, "set up EUNE");
                 break;
             }
             case "BR": {
                 RiotAPI.setRegion(Region.BR);
-                Log.i(TAG, "set up BR");
                 break;
             }
             case "TR": {
                 RiotAPI.setRegion(Region.TR);
-                Log.i(TAG, "set up TR");
                 break;
             }
             case "LAS": {
                 RiotAPI.setRegion(Region.LAS);
-                Log.i(TAG, "set up LAS");
                 break;
             }
             case "LAN": {
                 RiotAPI.setRegion(Region.LAN);
-                Log.i(TAG, "set up LAN");
                 break;
             }
             case "OCE": {
                 RiotAPI.setRegion(Region.OCE);
-                Log.i(TAG, "set up OCE");
                 break;
             }
             case "RU": {
                 RiotAPI.setRegion(Region.RU);
-                Log.i(TAG, "set up RU");
                 break;
             }
             default: {
@@ -604,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         RiotAPI.setLoadPolicy(LoadPolicy.UPFRONT);
-        RiotAPI.setRateLimit(new RateLimit(10, 10), new RateLimit(500, 600));
+        RiotAPI.setRateLimit(new RateLimit(3000, 10), new RateLimit(180000, 600));
         RiotAPI.setAPIKey(apiKey);
     }
 
