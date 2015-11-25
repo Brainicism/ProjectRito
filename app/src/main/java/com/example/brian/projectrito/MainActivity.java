@@ -24,15 +24,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.robrua.orianna.api.core.MatchAPI;
 import com.robrua.orianna.api.core.RiotAPI;
 import com.robrua.orianna.api.dto.BaseRiotAPI;
-import com.robrua.orianna.type.api.LoadPolicy;
-import com.robrua.orianna.type.api.RateLimit;
-import com.robrua.orianna.type.core.common.Region;
 import com.robrua.orianna.type.core.league.League;
 import com.robrua.orianna.type.core.league.LeagueEntry;
 import com.robrua.orianna.type.core.league.MiniSeries;
@@ -63,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     public static LinearLayout promoSeries;
     public static LinearLayout headerRankedInfo;
     public static LinearLayout splashScreen;
+    public static RelativeLayout progressScreen;
     public static AutoResizeTextView headerSummonerName; //textview on summonerHeader, display summoner name
     public static TextView headerSummonerRank;
     public static TextView headerSummonerWL;
@@ -78,10 +77,11 @@ public class MainActivity extends AppCompatActivity {
     public static League summonerLeague;
     public static LeagueEntry summonerLeagueEntry;
     public static MiniSeries promos;
-    public static List<MatchReference> matchRefList;
+    public static List<MatchReference> matchRefList = new ArrayList<>();
     public static List<MatchReference> cleanedRefList = new ArrayList<>();
     public static List<Match> matchList;
     public static List<String> versionsList;
+    public static pl.droidsonroids.gif.GifImageView progressImage;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -157,11 +157,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         splashScreen = (LinearLayout) findViewById(R.id.splashScreen);
+        progressScreen = (RelativeLayout) findViewById(R.id.progressScreen);
+        progressImage = (pl.droidsonroids.gif.GifImageView) findViewById(R.id.progressImage);
         splashScreen.setVisibility(View.VISIBLE);
         gameModePreference = prefs.getString("gameModePreference", "ALL"); //gets data from shared preferences
         serverRegion = prefs.getString("serverRegion", "NA");
         matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
-        initialAPISetup(); //updates API settings
+        MiscMethods.initialAPISetup(); //updates API settings
     }
 
     @Override
@@ -188,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             gameModePreference = prefs.getString("gameModePreference", "ALL"); //gets data from shared preferences
             serverRegion = prefs.getString("serverRegion", "NA");
             matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
-            regionSetup();
+            MiscMethods.regionSetup();
         }
 
         @Override
@@ -268,13 +270,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class getSummonerData extends AsyncTask<Void, Void, List<Match>> { //async task for retrieving match data from API
-
+    boolean emptyMatch = false;
         @Override
         protected void onPreExecute() {
             if (notFirstRun) {
                 matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
             }
             splashScreen.setVisibility(View.GONE); //hides splash screen
+            progressImage.setImageResource(MiscMethods.getLoadingImageResource());
+            progressScreen.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -333,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
             matchList = new ArrayList<>();
             matchList.clear();
             Log.i("MainActivity", "Converting match references to match objects, ref list size of: " + String.valueOf(cleanedRefList.size()));
-
+            long start = System.nanoTime();
             if (cleanedRefList.size()>0)
                 try {
                     matchList = MatchAPI.getMatchesByReference(cleanedRefList);
@@ -341,6 +345,11 @@ public class MainActivity extends AppCompatActivity {
                 catch(APIException e){
                     e.printStackTrace();
                 }
+
+            if (matchList.size() == 0)
+                emptyMatch = true;
+            long end = System.nanoTime();
+            Log.i("MainActivity", "Converted "+ matchList.size() +" references to match objects " + String.valueOf((end-start)/1000000000)+ " seconds");
 
             List<League> listLeague = new ArrayList<>();
             listLeague.clear();
@@ -388,9 +397,15 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
+            if (emptyMatch)
+                Toast.makeText(MainActivity.this, "ERROR: Something went wrong?", Toast.LENGTH_SHORT).show();
+
             listAdapter = new MatchAdapter(MainActivity.this, changedMatches); //creates list adapter for the array of matches
             matchHistory = (ListView) findViewById(R.id.matchHistoryList);
             matchHistory.setVisibility(View.VISIBLE); //unhides the match history view
+           progressScreen.setVisibility(View.GONE);
+            //spinner.setVisibility(View.GONE);
+
 
             if (!notFirstRun) {
                 summonerHeader = (LinearLayout) View.inflate(MainActivity.this, R.layout.header_layout, null); //creates summoner banner to the top of the list view
@@ -427,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             summonerRank = (ImageView) findViewById(R.id.summonerRank);
-            summonerRank.setImageResource(getRankResource(summonerSoloRank));
+            summonerRank.setImageResource(MiscMethods.getRankResource(summonerSoloRank));
             promoSeries = (LinearLayout) findViewById(R.id.promoSeries);
 
             promoGame1 = (ImageView) findViewById(R.id.promoGame1);
@@ -445,12 +460,12 @@ public class MainActivity extends AppCompatActivity {
                 if (promoProgress.length() == 3) {
                     promoGame4.setVisibility(View.GONE);
                     promoGame5.setVisibility(View.GONE);
-                    promoWinLoss(promoProgress);
+                    MiscMethods.promoWinLoss(promoProgress);
 
                 } else if (promoProgress.length() == 5) {
                     promoGame4.setVisibility(View.VISIBLE);
                     promoGame5.setVisibility(View.VISIBLE);
-                    promoWinLoss(promoProgress);
+                    MiscMethods.promoWinLoss(promoProgress);
                 }
             }
         }
@@ -480,131 +495,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void promoWinLoss(String promoProgress) {
-        if (promoProgress.length() == 3) {
-            char gameOne = promoProgress.charAt(0); //gets w/l of promotion games
-            char gameTwo = promoProgress.charAt(1);
-            char gameThree = promoProgress.charAt(2);
-            if (gameOne == 'W')
-                promoGame1.setImageResource(R.drawable.promo_win);
-            else if (gameOne == 'L')
-                promoGame1.setImageResource(R.drawable.promo_loss);
-            else if (gameOne == 'N')
-                promoGame2.setImageResource(R.drawable.promo_unplayed);
 
-            if (gameTwo == 'W')
-                promoGame2.setImageResource(R.drawable.promo_win);
-            else if (gameTwo == 'L')
-                promoGame2.setImageResource(R.drawable.promo_loss);
-            else if (gameTwo == 'N')
-                promoGame2.setImageResource(R.drawable.promo_unplayed);
-
-            if (gameThree == 'W')
-                promoGame3.setImageResource(R.drawable.promo_win);
-            else if (gameThree == 'L')
-                promoGame3.setImageResource(R.drawable.promo_loss);
-            else if (gameThree == 'N')
-                promoGame3.setImageResource(R.drawable.promo_unplayed);
-        } else if (promoProgress.length() == 5) {
-            char gameOne = promoProgress.charAt(0);
-            char gameTwo = promoProgress.charAt(1);
-            char gameThree = promoProgress.charAt(2);
-            char gameFour = promoProgress.charAt(3);
-            char gameFive = promoProgress.charAt(4);
-            if (gameOne == 'W')
-                promoGame1.setImageResource(R.drawable.promo_win);
-            else if (gameOne == 'L')
-                promoGame1.setImageResource(R.drawable.promo_loss);
-            else if (gameOne == 'N')
-                promoGame2.setImageResource(R.drawable.promo_unplayed);
-
-            if (gameTwo == 'W')
-                promoGame2.setImageResource(R.drawable.promo_win);
-            else if (gameTwo == 'L')
-                promoGame2.setImageResource(R.drawable.promo_loss);
-            else if (gameTwo == 'N')
-                promoGame2.setImageResource(R.drawable.promo_unplayed);
-
-            if (gameThree == 'W')
-                promoGame3.setImageResource(R.drawable.promo_win);
-            else if (gameThree == 'L')
-                promoGame3.setImageResource(R.drawable.promo_loss);
-            else if (gameThree == 'N')
-                promoGame3.setImageResource(R.drawable.promo_unplayed);
-
-            if (gameFour == 'W')
-                promoGame4.setImageResource(R.drawable.promo_win);
-            else if (gameFour == 'L')
-                promoGame4.setImageResource(R.drawable.promo_loss);
-            else if (gameFour == 'N')
-                promoGame4.setImageResource(R.drawable.promo_unplayed);
-
-            if (gameFive == 'W')
-                promoGame5.setImageResource(R.drawable.promo_win);
-            else if (gameFive == 'L')
-                promoGame5.setImageResource(R.drawable.promo_loss);
-            else if (gameFive == 'N')
-                promoGame5.setImageResource(R.drawable.promo_unplayed);
-        }
-
-
-    }
-
-    public static void initialAPISetup() {
-        RiotAPI.setLoadPolicy(LoadPolicy.UPFRONT);
-        RiotAPI.setRateLimit(new RateLimit(3000, 10), new RateLimit(180000, 600));
-        RiotAPI.setAPIKey(apiKey);
-    }
-    public static void regionSetup(){
-        //sets API settings based on server
-        switch (serverRegion) {
-            case "NA": {
-                RiotAPI.setRegion(Region.NA);
-                break;
-            }
-            case "KR": {
-                RiotAPI.setRegion(Region.KR);
-                break;
-            }
-            case "EUW": {
-                RiotAPI.setRegion(Region.EUW);
-                break;
-            }
-            case "EUNE": {
-                RiotAPI.setRegion(Region.EUNE);
-                break;
-            }
-            case "BR": {
-                RiotAPI.setRegion(Region.BR);
-                break;
-            }
-            case "TR": {
-                RiotAPI.setRegion(Region.TR);
-                break;
-            }
-            case "LAS": {
-                RiotAPI.setRegion(Region.LAS);
-                break;
-            }
-            case "LAN": {
-                RiotAPI.setRegion(Region.LAN);
-                break;
-            }
-            case "OCE": {
-                RiotAPI.setRegion(Region.OCE);
-                break;
-            }
-            case "RU": {
-                RiotAPI.setRegion(Region.RU);
-                break;
-            }
-            default: {
-                RiotAPI.setRegion(Region.NA);
-                Log.i(TAG, "unknown server, using NA");
-                break;
-            }
-        }
-    }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -612,95 +503,5 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public static int getRankResource(String rank) { //returns appropriate image for summoner's rank
-        switch (rank) {
-            case "UNRANKED": {
-                return R.drawable.provisional;
-            }
-            case "BRONZE V": {
-                return R.drawable.bronze_v;
-            }
-            case "BRONZE IV": {
-                return R.drawable.bronze_iv;
-            }
-            case "BRONZE III": {
-                return R.drawable.bronze_iii;
-            }
-            case "BRONZE II": {
-                return R.drawable.bronze_ii;
-            }
-            case "BRONZE I": {
-                return R.drawable.bronze_i;
-            }
-            case "SILVER V": {
-                return R.drawable.silver_v;
-            }
-            case "SILVER IV": {
-                return R.drawable.silver_iv;
-            }
-            case "SILVER III": {
-                return R.drawable.silver_iii;
-            }
-            case "SILVER II": {
-                return R.drawable.silver_ii;
-            }
-            case "SILVER I": {
-                return R.drawable.silver_i;
-            }
-            case "GOLD V": {
-                return R.drawable.gold_v;
-            }
-            case "GOLD IV": {
-                return R.drawable.gold_iv;
-            }
-            case "GOLD III": {
-                return R.drawable.gold_iii;
-            }
-            case "GOLD II": {
-                return R.drawable.gold_ii;
-            }
-            case "GOLD I": {
-                return R.drawable.gold_i;
-            }
-            case "PLATINUM V": {
-                return R.drawable.platinum_v;
-            }
-            case "PLATINUM IV": {
-                return R.drawable.platinum_iv;
-            }
-            case "PLATINUM III": {
-                return R.drawable.platinum_iii;
-            }
-            case "PLATINUM II": {
-                return R.drawable.platinum_ii;
-            }
-            case "PLATINUM I": {
-                return R.drawable.platinum_i;
-            }
-            case "DIAMOND V": {
-                return R.drawable.diamond_v;
-            }
-            case "DIAMOND IV": {
-                return R.drawable.diamond_iv;
-            }
-            case "DIAMOND III": {
-                return R.drawable.diamond_iii;
-            }
-            case "DIAMOND II": {
-                return R.drawable.diamond_ii;
-            }
-            case "DIAMOND I": {
-                return R.drawable.diamond_i;
-            }
-            case "MASTER I": {
-                return R.drawable.master;
-            }
-            case "CHALLENGER I": {
-                return R.drawable.challenger;
-            }
-            default: {
-                return R.drawable.unranked;
-            }
-        }
-    }
+
 }

@@ -24,4 +24,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.+'
     compile files('libs/picasso-2.5.2.jar')
     compile files('libs/orianna-android-2.4.1.jar')
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
 }
