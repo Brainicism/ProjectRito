@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
             gameModePreference = prefs.getString("gameModePreference", "ALL"); //gets data from shared preferences
             serverRegion = prefs.getString("serverRegion", "NA");
             matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
-            initialAPISetup(); //updates API settings
+            regionSetup();
         }
 
         @Override
@@ -330,15 +330,20 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
-
             matchList = new ArrayList<>();
             matchList.clear();
-            Log.i("MainActivity", "Converting match references to match objects");
+            Log.i("MainActivity", "Converting match references to match objects, ref list size of: " + String.valueOf(cleanedRefList.size()));
+
             if (cleanedRefList.size()>0)
-            matchList = MatchAPI.getMatchesByReference(cleanedRefList);
-            Log.i("MainActivity", "Converted match references to match objects");
+                try {
+                    matchList = MatchAPI.getMatchesByReference(cleanedRefList);
+                }
+                catch(APIException e){
+                    e.printStackTrace();
+                }
 
             List<League> listLeague = new ArrayList<>();
+            listLeague.clear();
             try {
                 listLeague = summoner.getLeagueEntries(); //gets the user's leagues
             } catch (APIException e) {
@@ -546,6 +551,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void initialAPISetup() {
+        RiotAPI.setLoadPolicy(LoadPolicy.UPFRONT);
+        RiotAPI.setRateLimit(new RateLimit(3000, 10), new RateLimit(180000, 600));
+        RiotAPI.setAPIKey(apiKey);
+    }
+    public static void regionSetup(){
         //sets API settings based on server
         switch (serverRegion) {
             case "NA": {
@@ -594,13 +604,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-
-
-        RiotAPI.setLoadPolicy(LoadPolicy.UPFRONT);
-        RiotAPI.setRateLimit(new RateLimit(3000, 10), new RateLimit(180000, 600));
-        RiotAPI.setAPIKey(apiKey);
     }
-
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
