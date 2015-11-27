@@ -1,4 +1,4 @@
-package com.example.brian.projectrito;
+package com.brainicism.prito.projectrito;
 
 import android.util.Log;
 
@@ -8,6 +8,7 @@ import com.robrua.orianna.type.api.RateLimit;
 import com.robrua.orianna.type.core.common.Region;
 
 public class MiscMethods {
+    public static final String TAG = MiscMethods.class.getName();
     public static void initialAPISetup() {
         RiotAPI.setLoadPolicy(LoadPolicy.UPFRONT);
         RiotAPI.setRateLimit(new RateLimit(3000, 10), new RateLimit(180000, 600));
@@ -134,7 +135,7 @@ public class MiscMethods {
 
     }
     public static int getLoadingImageResource (){
-        int rand = (int) (Math.random() * (6 - 1)) + 1;
+        int rand = (int) (Math.random() * (7 - 1)) + 1;
         switch (rand){
             case 1:
                 return R.drawable.dravenkatloading;
@@ -146,6 +147,9 @@ public class MiscMethods {
                 return R.drawable.teemoloading;
             case 5:
                 return R.drawable.lululoading2;
+            case 6:
+                return R.drawable.zedloading;
+
 
         }
 

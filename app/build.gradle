@@ -5,7 +5,7 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "com.example.brian.projectrito"
+        applicationId "com.brainicism.prito.projectrito"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

@@ -1,4 +1,4 @@
-package com.example.brian.projectrito;
+package com.brainicism.prito.projectrito;
 
 import android.content.Context;
 import android.graphics.Color;

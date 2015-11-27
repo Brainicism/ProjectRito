@@ -1,13 +1,10 @@
-package com.example.brian.projectrito;
+package com.brainicism.prito.projectrito;
 
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 
-/**
- * Created by Brian on 9/9/2015.
- */
+
 public class MyPreferenceActivity extends AppCompatActivity {
 
     @Override

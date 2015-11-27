@@ -1,4 +1,4 @@
-package com.example.brian.projectrito;
+package com.brainicism.prito.projectrito;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class MatchDetailsWebView extends Activity {
+public class InternalWebView extends Activity {
     String URL;
     private WebView webView;
 
@@ -16,7 +16,7 @@ public class MatchDetailsWebView extends Activity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            URL = extras.getString("matchURL");
+            URL = extras.getString("URL");
         }
         webView = (WebView) findViewById(R.id.webView1);
         webView.getSettings().setJavaScriptEnabled(true);

@@ -1,15 +1,15 @@
-package com.example.brian.projectrito;
+package com.brainicism.prito.projectrito;
 
 
-        import android.content.Context;
-        import android.content.res.TypedArray;
-        import android.preference.DialogPreference;
-        import android.util.AttributeSet;
-        import android.view.Gravity;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.FrameLayout;
-        import android.widget.NumberPicker;
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.preference.DialogPreference;
+import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.NumberPicker;
 
 /**
  * A {@link android.preference.Preference} that displays a number picker as a dialog.

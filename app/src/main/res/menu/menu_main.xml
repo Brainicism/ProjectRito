@@ -8,6 +8,11 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
+        android:id="@+id/about_page"
+        android:orderInCategory="200"
+        android:title="@string/about_page"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black_48dp"
         android:title="Search"

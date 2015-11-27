@@ -1,4 +1,4 @@
-package com.example.brian.projectrito;
+package com.brainicism.prito.projectrito;
 
 import android.content.Context;
 import android.content.Intent;
@@ -89,18 +89,24 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings: // intents to preference activity
                 Intent i = new Intent(this, MyPreferenceActivity.class);
                 startActivity(i);
+                break;
             case R.id.refresh_button: {
                 if (notFirstRun) //if a summoner has already done a search
                 {
                     checkValidSummoner check = new checkValidSummoner();
                     check.execute();
                 }
+                break;
             }
+            case R.id.about_page:
+                Intent j = new Intent(this, AboutPage.class);
+                startActivity(j);
+                break;
             default:
                 return true;
         }
+        return true;
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) { //inflates options menu
@@ -215,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             }
             try {
                 Log.i("MainActivity", "Begin retrieving match list");
-                matchRefList = summoner.getMatchList();//gets summoner's ranked match list
+                matchRefList = RiotAPI.getMatchList(summoner.getID());//gets summoner's ranked match list
                 Log.i("MainActivity", "Done getting match list; length of " + matchRefList.size());
 
             } catch (NullPointerException e) { //catches exception when summoner has no matches played
@@ -256,6 +262,8 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     } else {
+                        Log.i(TAG, "begin retrieve smmoner data");
+
                         retrieveSummonerData(); //executes data request if requirements are satisfied
                     }
                 }
@@ -270,7 +278,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class getSummonerData extends AsyncTask<Void, Void, List<Match>> { //async task for retrieving match data from API
-    boolean emptyMatch = false;
+        boolean emptyMatch = false;
+
         @Override
         protected void onPreExecute() {
             if (notFirstRun) {
@@ -338,18 +347,16 @@ public class MainActivity extends AppCompatActivity {
             matchList.clear();
             Log.i("MainActivity", "Converting match references to match objects, ref list size of: " + String.valueOf(cleanedRefList.size()));
             long start = System.nanoTime();
-            if (cleanedRefList.size()>0)
-                try {
-                    matchList = MatchAPI.getMatchesByReference(cleanedRefList);
-                }
-                catch(APIException e){
-                    e.printStackTrace();
-                }
+            try {
+                matchList = MatchAPI.getMatchesByReference(cleanedRefList);
+            } catch (APIException e) {
+                e.printStackTrace();
+            }
 
             if (matchList.size() == 0)
                 emptyMatch = true;
             long end = System.nanoTime();
-            Log.i("MainActivity", "Converted "+ matchList.size() +" references to match objects " + String.valueOf((end-start)/1000000000)+ " seconds");
+            Log.i("MainActivity", "Converted " + matchList.size() + " references to match objects " + String.valueOf((end - start) / 1000000000) + " seconds");
 
             List<League> listLeague = new ArrayList<>();
             listLeague.clear();
@@ -389,10 +396,13 @@ public class MainActivity extends AppCompatActivity {
                 switch (gameModePreference) {
                     case "RANKED_SOLO_5x5":
                         Toast.makeText(MainActivity.this, "User has no games of Ranked Solo 5v5 played. Try switching game mode preference", Toast.LENGTH_LONG).show();
+                        break;
                     case "RANKED_TEAM_5x5":
                         Toast.makeText(MainActivity.this, "User has no games of Ranked Team 5v5 played. Try switching game mode preference", Toast.LENGTH_LONG).show();
+                        break;
                     case "RANKED_TEAM_3x3":
                         Toast.makeText(MainActivity.this, "User has no games of Ranked Team 3v3 played. Try switching game mode preference", Toast.LENGTH_LONG).show();
+                        break;
 
                 }
 
@@ -403,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
             listAdapter = new MatchAdapter(MainActivity.this, changedMatches); //creates list adapter for the array of matches
             matchHistory = (ListView) findViewById(R.id.matchHistoryList);
             matchHistory.setVisibility(View.VISIBLE); //unhides the match history view
-           progressScreen.setVisibility(View.GONE);
+            progressScreen.setVisibility(View.GONE);
             //spinner.setVisibility(View.GONE);
 
 
@@ -420,8 +430,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                     String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
-                    Intent intent = new Intent(getBaseContext(), MatchDetailsWebView.class);
-                    intent.putExtra("matchURL", fullURL);
+                    Intent intent = new Intent(getBaseContext(), InternalWebView.class);
+                    intent.putExtra("URL", fullURL);
                     startActivity(intent);
                 }
             });
