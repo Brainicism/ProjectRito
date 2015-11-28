@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="ModeTypes">
-        <item>"All"</item>
+        <item>"All Ranked"</item>
+        <item>"Recent 10 (includes non-ranked)"</item>
         <item>"Ranked Solo 5v5"</item>
         <item>"Ranked Team 5v5</item>
         <item>"Ranked Team 3V3</item>
     </string-array>
     <string-array name="ModeTypesEntry">
-        <item>"ALL"</item>
+        <item>"ALL_RANKED"</item>
+        <item>"RECENT_10"</item>
         <item>"RANKED_SOLO_5x5"</item>
         <item>"RANKED_TEAM_5x5</item>
         <item>"RANKED_TEAM_3x3</item>

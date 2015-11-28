@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.robrua.orianna.api.core.MatchAPI;
 import com.robrua.orianna.api.core.RiotAPI;
 import com.robrua.orianna.api.dto.BaseRiotAPI;
+import com.robrua.orianna.type.core.game.Game;
 import com.robrua.orianna.type.core.league.League;
 import com.robrua.orianna.type.core.league.LeagueEntry;
 import com.robrua.orianna.type.core.league.MiniSeries;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean notFirstRun = false;
 
     public static ListAdapter listAdapter; //array adapter for list of matches
+    public static GameAdapter gameListAdapter;
     public static LinearLayout summonerHeader; //header at the top of the list, displaying summoner information
     public static LinearLayout promoSeries;
     public static LinearLayout headerRankedInfo;
@@ -78,10 +80,13 @@ public class MainActivity extends AppCompatActivity {
     public static LeagueEntry summonerLeagueEntry;
     public static MiniSeries promos;
     public static List<MatchReference> matchRefList = new ArrayList<>();
+    public static List<Game> gameList = new ArrayList<>();
     public static List<MatchReference> cleanedRefList = new ArrayList<>();
     public static List<Match> matchList;
     public static List<String> versionsList;
     public static pl.droidsonroids.gif.GifImageView progressImage;
+    public static boolean ranked = false; //false = normals
+    public static Summoner adapterSummoner;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -166,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         progressScreen = (RelativeLayout) findViewById(R.id.progressScreen);
         progressImage = (pl.droidsonroids.gif.GifImageView) findViewById(R.id.progressImage);
         splashScreen.setVisibility(View.VISIBLE);
-        gameModePreference = prefs.getString("gameModePreference", "ALL"); //gets data from shared preferences
+        gameModePreference = prefs.getString("gameModePreference", "ALL_RANKED"); //gets data from shared preferences
         serverRegion = prefs.getString("serverRegion", "NA");
         matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
         MiscMethods.initialAPISetup(); //updates API settings
@@ -193,9 +198,13 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             hideKeyboard();
             screenRotation = getRotation(getBaseContext());
-            gameModePreference = prefs.getString("gameModePreference", "ALL"); //gets data from shared preferences
+            gameModePreference = prefs.getString("gameModePreference", "RANKED"); //gets data from shared preferences
             serverRegion = prefs.getString("serverRegion", "NA");
             matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
+            if (gameModePreference.equals("RECENT_10"))
+                ranked = false;
+            else
+                ranked = true;
             MiscMethods.regionSetup();
         }
 
@@ -219,19 +228,33 @@ public class MainActivity extends AppCompatActivity {
                     invalidKey = true;
                 }
             }
-            try {
-                Log.i("MainActivity", "Begin retrieving match list");
-                matchRefList = RiotAPI.getMatchList(summoner.getID());//gets summoner's ranked match list
-                Log.i("MainActivity", "Done getting match list; length of " + matchRefList.size());
-
-            } catch (NullPointerException e) { //catches exception when summoner has no matches played
-                e.printStackTrace();
-                matchRefList = null;
-            } catch (APIException e) {
-                if (String.valueOf(e.getStatus()).equals("SERVICE_UNAVAILABLE") || String.valueOf(e.getStatus()).equals("INTERNAL_SERVER_ERROR")) {
-                    serverDown = true;
+            if (ranked) {
+                try {
+                    matchRefList = RiotAPI.getMatchList(summoner.getID());//gets summoner's ranked match list
+                } catch (NullPointerException e) { //catches exception when summoner has no matches played
+                    e.printStackTrace();
+                    matchRefList = null;
+                    Log.i(TAG, "NULL MATCH REF LIST");
+                } catch (APIException e) {
+                    if (String.valueOf(e.getStatus()).equals("SERVICE_UNAVAILABLE") || String.valueOf(e.getStatus()).equals("INTERNAL_SERVER_ERROR")) {
+                        serverDown = true;
+                        matchRefList = null;
+                    }
+                }
+            } else {
+                try {
+                    gameList = RiotAPI.getRecentGames(summoner.getID());
+                } catch (NullPointerException e) { //catches exception when summoner has no matches played
+                    e.printStackTrace();
+                    gameList = null;
+                } catch (APIException e) {
+                    if (String.valueOf(e.getStatus()).equals("SERVICE_UNAVAILABLE") || String.valueOf(e.getStatus()).equals("INTERNAL_SERVER_ERROR")) {
+                        serverDown = true;
+                        gameList = null;
+                    }
                 }
             }
+
             return null;
         }
 
@@ -246,13 +269,15 @@ public class MainActivity extends AppCompatActivity {
                 if (!summonerFound) { //if summoner was not found (does not exist)
                     {
                         Toast.makeText(MainActivity.this, "ERROR: Summoner does not exist?", Toast.LENGTH_SHORT).show();
+                        if (notFirstRun)
+                            matchHistory.setVisibility(View.INVISIBLE);
                         if (prevSummoner != null) { //resets currently shown summoner to previous valid summoner
                             summoner = prevSummoner;
                             summonerName = summoner.getName();
                         }
                     }
                 } else {
-                    if (matchRefList == null) { //if summoner has never played a ranked game
+                    if (ranked && matchRefList == null){
                         Toast.makeText(MainActivity.this, "ERROR: Summoner has no ranked games played?", Toast.LENGTH_SHORT).show();
                         if (matchHistory != null)
                             matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
@@ -261,7 +286,19 @@ public class MainActivity extends AppCompatActivity {
                             summonerName = summoner.getName();
                         }
 
-                    } else {
+                    }
+                    else if (!ranked && gameList == null){
+
+                        Toast.makeText(MainActivity.this, "ERROR: Summoner has no games played?", Toast.LENGTH_SHORT).show();
+                        if (matchHistory != null)
+                            matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
+                        if (prevSummoner != null) {  //resets currently shown summoner to previous valid summoner
+                            summoner = prevSummoner;
+                            summonerName = summoner.getName();
+                        }
+
+                    }
+                  else {
                         Log.i(TAG, "begin retrieve smmoner data");
 
                         retrieveSummonerData(); //executes data request if requirements are satisfied
@@ -288,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
             splashScreen.setVisibility(View.GONE); //hides splash screen
             progressImage.setImageResource(MiscMethods.getLoadingImageResource());
             progressScreen.setVisibility(View.VISIBLE);
+            adapterSummoner = summoner;
         }
 
         @Override
@@ -333,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 }
-                case "ALL": {
+                case "ALL_RANKED": {
                     for (int i = 0; i < matchRefList.size(); i++) {
                         if (matchesFound >= matchHistoryLength)
                             break;
@@ -341,6 +379,13 @@ public class MainActivity extends AppCompatActivity {
                         matchesFound++;
                     }
                     break;
+                }
+                case "RECENT_10": {
+                    if (matchHistoryLength > gameList.size()) {
+                        gameList = gameList.subList(0, 9);
+                    } else {
+                        gameList = gameList.subList(0, (gameList.size()) - matchHistoryLength);
+                    }
                 }
             }
             matchList = new ArrayList<>();
@@ -353,8 +398,9 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (matchList.size() == 0)
+            if ((matchList == null && ranked) || (gameList == null && !ranked))
                 emptyMatch = true;
+
             long end = System.nanoTime();
             Log.i("MainActivity", "Converted " + matchList.size() + " references to match objects " + String.valueOf((end - start) / 1000000000) + " seconds");
 
@@ -403,41 +449,44 @@ public class MainActivity extends AppCompatActivity {
                     case "RANKED_TEAM_3x3":
                         Toast.makeText(MainActivity.this, "User has no games of Ranked Team 3v3 played. Try switching game mode preference", Toast.LENGTH_LONG).show();
                         break;
-
                 }
-
             }
             if (emptyMatch)
                 Toast.makeText(MainActivity.this, "ERROR: Something went wrong?", Toast.LENGTH_SHORT).show();
 
-            listAdapter = new MatchAdapter(MainActivity.this, changedMatches); //creates list adapter for the array of matches
             matchHistory = (ListView) findViewById(R.id.matchHistoryList);
             matchHistory.setVisibility(View.VISIBLE); //unhides the match history view
+
             progressScreen.setVisibility(View.GONE);
-            //spinner.setVisibility(View.GONE);
-
-
             if (!notFirstRun) {
                 summonerHeader = (LinearLayout) View.inflate(MainActivity.this, R.layout.header_layout, null); //creates summoner banner to the top of the list view
                 matchHistory.addHeaderView(summonerHeader, null, false); //appends the top banner onto the top of the list view
                 notFirstRun = true;
             }
-
-            matchHistory.setAdapter(listAdapter); //sets the array adapter to the match history list view
+            if (ranked) {
+                listAdapter = new MatchAdapter(MainActivity.this, changedMatches); //creates list adapter for the array of matches
+                matchHistory.setAdapter(listAdapter); //sets the array adapter to the match history list view
+            } else {
+                gameListAdapter = new GameAdapter(MainActivity.this, gameList); //creates list adapter for the array of matches
+                matchHistory.setAdapter(gameListAdapter); //sets the array adapter to the match history list view
+            }
 
             matchHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() { //detects on click on a specific item
 
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
-                    Intent intent = new Intent(getBaseContext(), InternalWebView.class);
-                    intent.putExtra("URL", fullURL);
-                    startActivity(intent);
+                    if (ranked) {
+                        String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
+                        Intent intent = new Intent(getBaseContext(), InternalWebView.class);
+                        intent.putExtra("URL", fullURL);
+                        startActivity(intent);
+                    }
                 }
             });
+
+
             headerSummonerName = (AutoResizeTextView) findViewById(R.id.headerSummonerName);
             headerSummonerName.setText(summoner.getName());
-
             headerSummonerRank = (TextView) findViewById(R.id.headerSummonerRank);
             headerSummonerRank.setText(summonerSoloRank);
             headerSummonerWL = (TextView) findViewById(R.id.headerSummonerWL);
@@ -454,7 +503,6 @@ public class MainActivity extends AppCompatActivity {
             summonerRank = (ImageView) findViewById(R.id.summonerRank);
             summonerRank.setImageResource(MiscMethods.getRankResource(summonerSoloRank));
             promoSeries = (LinearLayout) findViewById(R.id.promoSeries);
-
             promoGame1 = (ImageView) findViewById(R.id.promoGame1);
             promoGame2 = (ImageView) findViewById(R.id.promoGame2);
             promoGame3 = (ImageView) findViewById(R.id.promoGame3);
