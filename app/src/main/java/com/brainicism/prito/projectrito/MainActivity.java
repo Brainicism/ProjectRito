@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+
             if (serverDown) { //if the API server is down
                 Toast.makeText(MainActivity.this, "API might be down", Toast.LENGTH_SHORT).show();
                 serverDown = false;
@@ -381,13 +382,16 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 case "RECENT_10": {
-                    if (matchHistoryLength > gameList.size()) {
-                        gameList = gameList.subList(0, 9);
+
+                    if (matchHistoryLength < gameList.size()) {
+                        gameList = gameList.subList(0, 10);
                     } else {
-                        gameList = gameList.subList(0, (gameList.size()) - matchHistoryLength);
+                        gameList = gameList.subList(0, (gameList.size()));
+
                     }
                 }
             }
+
             matchList = new ArrayList<>();
             matchList.clear();
             Log.i("MainActivity", "Converting match references to match objects, ref list size of: " + String.valueOf(cleanedRefList.size()));
@@ -402,6 +406,7 @@ public class MainActivity extends AppCompatActivity {
                 emptyMatch = true;
 
             long end = System.nanoTime();
+            Log.i(TAG, String.valueOf(gameList.size()) + " is game list size");
             Log.i("MainActivity", "Converted " + matchList.size() + " references to match objects " + String.valueOf((end - start) / 1000000000) + " seconds");
 
             List<League> listLeague = new ArrayList<>();
