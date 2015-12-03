@@ -175,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
         serverRegion = prefs.getString("serverRegion", "NA");
         matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
         MiscMethods.initialAPISetup(); //updates API settings
+        MiscMethods.regionSetup();
+        fetchData fetch = new fetchData(); //preload data
+        fetch.execute();
     }
 
     @Override
@@ -406,7 +409,6 @@ public class MainActivity extends AppCompatActivity {
                 emptyMatch = true;
 
             long end = System.nanoTime();
-            Log.i(TAG, String.valueOf(gameList.size()) + " is game list size");
             Log.i("MainActivity", "Converted " + matchList.size() + " references to match objects " + String.valueOf((end - start) / 1000000000) + " seconds");
 
             List<League> listLeague = new ArrayList<>();
@@ -567,4 +569,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private class fetchData extends AsyncTask<String, Void, Void> {
+
+
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            RiotAPI.getChampions();
+            RiotAPI.getItems();
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Log.i(TAG, "Fetched champ/item data");
+
+        }
+    }
 }
+
