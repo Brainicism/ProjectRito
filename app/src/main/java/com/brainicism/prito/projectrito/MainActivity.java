@@ -482,12 +482,11 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    if (ranked) {
                         String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
                         Intent intent = new Intent(getBaseContext(), InternalWebView.class);
                         intent.putExtra("URL", fullURL);
                         startActivity(intent);
-                    }
+
                 }
             });
 

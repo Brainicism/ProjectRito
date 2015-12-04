@@ -2,6 +2,7 @@ package com.brainicism.prito.projectrito;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.robrua.orianna.type.core.game.Game;
+import com.robrua.orianna.type.core.game.Player;
 import com.robrua.orianna.type.core.staticdata.Champion;
 import com.squareup.picasso.Picasso;
 
@@ -57,7 +59,8 @@ public class GameAdapter extends ArrayAdapter<Game> {
     private LinearLayout goldCs;
     private LinearLayout summonerSpellBox;
 
-
+    private List<Player> listOfParticipants;
+    private Player player;
     private Game selectedGame; //the current match on the list
     private Champion champ; //champion played by the main summoner
 
@@ -90,7 +93,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
         summonerSpellBox = (LinearLayout) theView.findViewById(R.id.summonerSpellBox);
         selectedGame = getItem(position); //gets the match based on the index on the list
         divider = theView.findViewById(R.id.divider);
-
+        Log.i(TAG, String.valueOf(player.getSummonerID() + " " + player.getSummoner().getName()));
         win = selectedGame.getStats().getWin();
         champ = selectedGame.getChampion();
         kills = (long) selectedGame.getStats().getKills();
@@ -99,7 +102,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
         summonerGold = (long) selectedGame.getStats().getGoldEarned();
         summonerGold = ((double) Math.round(summonerGold / 1000 * 10)) / 10;
         cs = (long) selectedGame.getStats().getMinionsKilled() + selectedGame.getStats().getNeutralMinionsKilledEnemyJungle() + selectedGame.getStats().getNeutralMinionsKilledYourJungle();
-        queueTypeText = selectedGame.getMode().name();
+        queueTypeText = selectedGame.getSubType().name();
         itemID[0] = selectedGame.getStats().getItem0ID();
         itemID[1] = selectedGame.getStats().getItem1ID();
         itemID[2] = selectedGame.getStats().getItem2ID();
@@ -109,7 +112,6 @@ public class GameAdapter extends ArrayAdapter<Game> {
         itemID[6] = selectedGame.getStats().getItem6ID();
         summonerSpellKey[0] = selectedGame.getSummonerSpell1().getKey();
         summonerSpellKey[1] = selectedGame.getSummonerSpell2().getKey();
-
 
         switch (MainActivity.serverRegion) {
             case "NA": {
@@ -173,6 +175,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
 
             }
         }
+
         Picasso.with(getContext()).load(itemURL[0]).error(R.drawable.blank_item).into(item0);
         Picasso.with(getContext()).load(itemURL[1]).error(R.drawable.blank_item).into(item1);
         Picasso.with(getContext()).load(itemURL[2]).error(R.drawable.blank_item).into(item2);
@@ -228,38 +231,106 @@ public class GameAdapter extends ArrayAdapter<Game> {
         championName.setText(String.valueOf(champ.getName()));
         championName.setTextColor(textColor);
         matchURI.setText(matchHistoryURL);
+        /*
+        ARAM_UNRANKED_5x5
+    ASCENSION
+    BILGEWATER
+    BOT
+    BOT_3x3
+    CAP_5x5
+    COUNTER_PICK
+    FIRSTBLOOD_1x1
+    FIRSTBLOOD_2x2
+    HEXAKILL
+    KING_PORO
+    NIGHTMARE_BOT
+    NONE
+    NORMAL
+    NORMAL_3x3
+    ODIN_UNRANKED
+    ONEFORALL_5x5
+    RANKED_PREMADE_3x3
+    RANKED_PREMADE_5x5
+    RANKED_SOLO_5x5
+    RANKED_TEAM_3x3
+    RANKED_TEAM_5x5
+    SR_6x6
+    URF
+    URF_BOT
+
+         */
         switch (queueTypeText) {
-            case "RANKED_TEAM_5x5":
-                queueType.setText("Ranked Team 5v5");
-                break;
-            case "RANKED_SOLO_5x5":
-                queueType.setText("Ranked Solo 5v5");
-                break;
-            case "RANKED_TEAM_3x3":
-                queueType.setText("Ranked Team 3v3");
-                break;
-            case "ARAM":
+            case "ARAM_UNRANKED_5x5":
                 queueType.setText("ARAM");
                 break;
-            case "CLASSIC":
-                queueType.setText("Normal");
+            case "ASCENSION":
+                queueType.setText("ASCENSION");
                 break;
-            case "FIRSTBLOOD":
-                queueType.setText("Snowdown Showdown");
+            case "BILGEWATER":
+                queueType.setText("Black Market Brawlers");
                 break;
-            case "KINGPORO":
+            case "BOT":
+                queueType.setText("5v5 Bots");
+                break;
+            case "BOT_3x3":
+                queueType.setText("3v3 Bots");
+                break;
+            case "CAP_5x5":
+                queueType.setText("5v5 Team Builder");
+                break;
+            case "COUNTER_PICK":
+                queueType.setText("Nemesis");
+                break;
+            case "FIRSTBLOOD_1x1":
+                queueType.setText("1v1 Snowdown Showdown");
+                break;
+            case "FIRSTBLOOD_2x2":
+                queueType.setText("2v2 Snowdown Showdown");
+                break;
+            case "HEXAKILL":
+                queueType.setText("Hexakill");
+                break;
+            case "KING_PORO ":
                 queueType.setText("Legend of the Poro King");
                 break;
-            case "ASCENSION":
-                queueType.setText("Ascension");
+            case "NIGHTMARE_BOT":
+                queueType.setText("Doom Bots");
                 break;
-            case "ODIN":
-                queueType.setText("Odin");
+            case "NONE":
+                queueType.setText("Custom");
                 break;
-            case "ONEFORALL":
+            case "NORMAL":
+                queueType.setText("5v5 Normal");
+                break;
+            case "NORMAL_3x3":
+                queueType.setText("3v3 Normal");
+                break;
+            case "ODIN_UNRANKED":
+                queueType.setText("Dominion");
+                break;
+            case "ONEFORALL_5x5":
                 queueType.setText("One For All");
                 break;
-
+            case "RANKED_SOLO_5x5":
+                queueType.setText("5v5 Ranked Solo");
+                break;
+            case "RANKED_TEAM_3x3":
+                queueType.setText("3v3 Ranked Teams");
+                break;
+            case "RANKED_TEAM_5x5":
+                queueType.setText("5v5 Ranked Teams");
+                break;
+            case "SR_6x6":
+                queueType.setText("Hexakill");
+                break;
+            case "URF":
+                queueType.setText("Ultra Rapid Fire");
+                break;
+            case "URF BOT":
+                queueType.setText("Ultra Rapid Fire Bots");
+                break;
+            default:
+                queueType.setText(String.valueOf(selectedGame.getSubType()));
 
         }
 
