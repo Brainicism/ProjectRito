@@ -2,7 +2,6 @@ package com.brainicism.prito.projectrito;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.robrua.orianna.type.core.game.Game;
-import com.robrua.orianna.type.core.game.Player;
 import com.robrua.orianna.type.core.staticdata.Champion;
 import com.squareup.picasso.Picasso;
 
@@ -59,8 +57,6 @@ public class GameAdapter extends ArrayAdapter<Game> {
     private LinearLayout goldCs;
     private LinearLayout summonerSpellBox;
 
-    private List<Player> listOfParticipants;
-    private Player player;
     private Game selectedGame; //the current match on the list
     private Champion champ; //champion played by the main summoner
 
@@ -93,7 +89,6 @@ public class GameAdapter extends ArrayAdapter<Game> {
         summonerSpellBox = (LinearLayout) theView.findViewById(R.id.summonerSpellBox);
         selectedGame = getItem(position); //gets the match based on the index on the list
         divider = theView.findViewById(R.id.divider);
-        Log.i(TAG, String.valueOf(player.getSummonerID() + " " + player.getSummoner().getName()));
         win = selectedGame.getStats().getWin();
         champ = selectedGame.getChampion();
         kills = (long) selectedGame.getStats().getKills();
@@ -150,7 +145,6 @@ public class GameAdapter extends ArrayAdapter<Game> {
                 matchHistoryURL = "http://matchhistory.oce.leagueoflegends.com/en/#match-details/OC1/" + selectedGame.getID();
                 break;
             }
-
             case "RU":
                 matchHistoryURL = "http://matchhistory.ru.leagueoflegends.com/ru/#match-details/RU/" + selectedGame.getID();
                 break;
@@ -176,7 +170,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
             }
         }
 
-        Picasso.with(getContext()).load(itemURL[0]).error(R.drawable.blank_item).into(item0);
+        Picasso.with(getContext()).load(itemURL[0]).error(R.drawable.blank_item).into(item0); //insert empty item if item not found
         Picasso.with(getContext()).load(itemURL[1]).error(R.drawable.blank_item).into(item1);
         Picasso.with(getContext()).load(itemURL[2]).error(R.drawable.blank_item).into(item2);
         Picasso.with(getContext()).load(itemURL[3]).error(R.drawable.blank_item).into(item3);
@@ -231,34 +225,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
         championName.setText(String.valueOf(champ.getName()));
         championName.setTextColor(textColor);
         matchURI.setText(matchHistoryURL);
-        /*
-        ARAM_UNRANKED_5x5
-    ASCENSION
-    BILGEWATER
-    BOT
-    BOT_3x3
-    CAP_5x5
-    COUNTER_PICK
-    FIRSTBLOOD_1x1
-    FIRSTBLOOD_2x2
-    HEXAKILL
-    KING_PORO
-    NIGHTMARE_BOT
-    NONE
-    NORMAL
-    NORMAL_3x3
-    ODIN_UNRANKED
-    ONEFORALL_5x5
-    RANKED_PREMADE_3x3
-    RANKED_PREMADE_5x5
-    RANKED_SOLO_5x5
-    RANKED_TEAM_3x3
-    RANKED_TEAM_5x5
-    SR_6x6
-    URF
-    URF_BOT
 
-         */
         switch (queueTypeText) {
             case "ARAM_UNRANKED_5x5":
                 queueType.setText("ARAM");
@@ -290,7 +257,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
             case "HEXAKILL":
                 queueType.setText("Hexakill");
                 break;
-            case "KING_PORO ":
+            case "KING_PORO":
                 queueType.setText("Legend of the Poro King");
                 break;
             case "NIGHTMARE_BOT":

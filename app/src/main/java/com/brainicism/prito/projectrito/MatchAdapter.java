@@ -192,7 +192,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 matchHistoryURL = "http://matchhistory.oce.leagueoflegends.com/en/#match-details/OC1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
                 break;
             }
-
             case "RU":
                 matchHistoryURL = "http://matchhistory.ru.leagueoflegends.com/ru/#match-details/RU/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
                 break;

@@ -11,9 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
 
-/**
- * A {@link android.preference.Preference} that displays a number picker as a dialog.
- */
+
 public class NumberPickerPreference extends DialogPreference {
 
     // allowed range

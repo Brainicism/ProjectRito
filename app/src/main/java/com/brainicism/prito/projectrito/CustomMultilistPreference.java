@@ -45,9 +45,6 @@ public class CustomMultilistPreference extends ListPreference implements OnClick
 
     public  void onClick (DialogInterface dialog, int which)
     {
-// when u click Cancel: which = -2;
-// when u click     OK: which = -1;
-
         if(which == -2){
             this.setValue(this.getEntryValues()[prevDialogEntryIndex]+"");
         }
