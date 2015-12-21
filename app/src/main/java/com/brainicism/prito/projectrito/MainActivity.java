@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -40,12 +39,12 @@ import com.robrua.orianna.type.core.league.LeagueEntry;
 import com.robrua.orianna.type.core.league.MiniSeries;
 import com.robrua.orianna.type.core.match.Match;
 import com.robrua.orianna.type.core.matchlist.MatchReference;
-import com.robrua.orianna.type.core.staticdata.Champion;
 import com.robrua.orianna.type.core.summoner.Summoner;
 import com.robrua.orianna.type.exception.APIException;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     public static ImageView summonerRank; //image showing summoner's rank
     public static ImageView promoGame1, promoGame2, promoGame3, promoGame4, promoGame5;
     public static ImageView currChampImage;
+    public static ImageView gameProgression;
     public static ListView matchHistory; //listview of matches
     public static Button splashStart, splashSettings;
     public static SharedPreferences prefs;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     public static pl.droidsonroids.gif.GifImageView progressImage;
     public static boolean ranked = false; //false = normals
     public static Summoner adapterSummoner;
-
+    public static long currGameTime = 0;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) { //on entry of summoner name
                 if (!isNetworkAvailable()) { //checks for internet conenction
-                    Toast.makeText(MainActivity.this, "Internet?", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "ERROR: No internet connection", Toast.LENGTH_SHORT).show();
                 } else {
                     summonerName = String.valueOf(searchView.getQuery()); //gets summoner name from search bar
                     checkValidSummoner check = new checkValidSummoner(); // begins to search for summmoner from server
@@ -272,10 +272,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
 
             if (serverDown) { //if the API server is down
-                Toast.makeText(MainActivity.this, "API might be down", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "ERROR: API might be down", Toast.LENGTH_SHORT).show();
                 serverDown = false;
             } else if (invalidKey) {
-                Toast.makeText(MainActivity.this, "Invalid API key?", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "ERROR: Invalid API key", Toast.LENGTH_SHORT).show();
             } else {
                 if (!summonerFound) { //if summoner was not found (does not exist)
                     {
@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    if (ranked && matchRefList == null){
+                    if (ranked && matchRefList == null) {
                         Toast.makeText(MainActivity.this, "ERROR: Summoner has no ranked games played?", Toast.LENGTH_SHORT).show();
                         if (matchHistory != null)
                             matchHistory.setVisibility(View.INVISIBLE); //hides match list while getting data
@@ -297,8 +297,7 @@ public class MainActivity extends AppCompatActivity {
                             summonerName = summoner.getName();
                         }
 
-                    }
-                    else if (!ranked && gameList == null){
+                    } else if (!ranked && gameList == null) {
 
                         Toast.makeText(MainActivity.this, "ERROR: Summoner has no games played?", Toast.LENGTH_SHORT).show();
                         if (matchHistory != null)
@@ -308,8 +307,7 @@ public class MainActivity extends AppCompatActivity {
                             summonerName = summoner.getName();
                         }
 
-                    }
-                  else {
+                    } else {
                         Log.i(TAG, "begin retrieve smmoner data");
 
                         retrieveSummonerData(); //executes data request if requirements are satisfied
@@ -328,8 +326,10 @@ public class MainActivity extends AppCompatActivity {
     private class getSummonerData extends AsyncTask<Void, Void, List<Match>> { //async task for retrieving match data from API
         boolean emptyMatch = false;
         public CurrentGame currentGame;
-        public Champion currentChampion;
         Participant currParticipant = null;
+        long start;
+        Date gameStart;
+
         @Override
         protected void onPreExecute() {
             if (notFirstRun) {
@@ -350,18 +350,17 @@ public class MainActivity extends AppCompatActivity {
             currentGame = RiotAPI.getCurrentGame(summoner);
             currParticipant = null;
             try {
-                List <Participant> participants = currentGame.getParticipants();
-                for (int i = 0; i < participants.size() ;i++){
-                    if (participants.get(i).getSummonerID() == summoner.getID()){ //find specific player
+                List<Participant> participants = currentGame.getParticipants();
+                for (int i = 0; i < participants.size(); i++) {
+                    if (participants.get(i).getSummonerID() == summoner.getID()) { //find specific player
                         currParticipant = participants.get(i);
-
                         break;
                     }
                 }
-
-                Log.i(TAG, "current game desu " + currParticipant.getChampion().getKey() + " " + MiscMethods.normalizeMap(String.valueOf(currentGame.getMap()))+ " " +  MiscMethods.normalizeQueueType(String.valueOf(currentGame.getQueueType())));
-            }
-            catch (NullPointerException e){
+                gameStart = currentGame.getStartTime();
+                currGameTime = (new Date().getTime() - gameStart.getTime()) / 1000;
+                start = System.currentTimeMillis();
+            } catch (NullPointerException e) {
                 Log.i(TAG, "not in current game");
             }
             switch (gameModePreference) {
@@ -426,19 +425,20 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i(TAG, ranked + " game list of " + gameList.size() + " ranked list of " + matchList.size());
             Log.i("MainActivity", "Converting match references to match objects, ref list size of: " + String.valueOf(cleanedRefList.size()));
-            long start = System.nanoTime();
-            try {
-                matchList = MatchAPI.getMatchesByReference(cleanedRefList);
-            } catch (APIException e) {
-                e.printStackTrace();
+            if (ranked) {
+                long startTime = System.nanoTime();
+                try {
+                    matchList = MatchAPI.getMatchesByReference(cleanedRefList);
+                } catch (APIException e) {
+                    e.printStackTrace();
+                }
+
+                if ((matchList == null && ranked) || (gameList == null && !ranked))
+                    emptyMatch = true;
+
+                long end = System.nanoTime();
+                Log.i("MainActivity", "Converted " + matchList.size() + " references to match objects " + String.valueOf((end - startTime) / 1000000000) + " seconds");
             }
-
-            if ((matchList == null && ranked) || (gameList == null && !ranked))
-                emptyMatch = true;
-
-            long end = System.nanoTime();
-            Log.i("MainActivity", "Converted " + matchList.size() + " references to match objects " + String.valueOf((end - start) / 1000000000) + " seconds");
-
             List<League> listLeague = new ArrayList<>();
             listLeague.clear();
             try {
@@ -510,10 +510,10 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
-                        Intent intent = new Intent(getBaseContext(), InternalWebView.class);
-                        intent.putExtra("URL", fullURL);
-                        startActivity(intent);
+                    String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
+                    Intent intent = new Intent(getBaseContext(), InternalWebView.class);
+                    intent.putExtra("URL", fullURL);
+                    startActivity(intent);
 
                 }
             });
@@ -528,30 +528,39 @@ public class MainActivity extends AppCompatActivity {
             currChamp = (TextView) findViewById(R.id.currChamp);
             currMap = (TextView) findViewById(R.id.currMap);
             currMode = (TextView) findViewById(R.id.currMode);
+            gameProgression = (ImageView) findViewById(R.id.gameProgression);
+            gameProgression.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateTime fetch = new updateTime(); //preload data
+                    fetch.execute();
+                }
+            });
             currentGameInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String fullURL = "http://www.lolnexus.com/"+ serverRegion+"/search?name=" + currParticipant.getSummonerName();
+                    String fullURL = "http://www.lolnexus.com/" + serverRegion + "/search?name=" + currParticipant.getSummonerName();
                     Intent intent = new Intent(getBaseContext(), InternalWebView.class);
                     intent.putExtra("URL", fullURL);
                     startActivity(intent);
                 }
             });
+            updateTimeIndicator();
+
             if (currentGame != null) { //current game information box
                 currentGameInfo.setVisibility(View.VISIBLE);
                 currChamp.setText(currParticipant.getChampion().getName());
                 currMap.setText(MiscMethods.normalizeMap(String.valueOf(currentGame.getMap())));
                 currMode.setText(MiscMethods.normalizeQueueType(String.valueOf(currentGame.getQueueType())));
                 Picasso.with(getBaseContext()).load("http://ddragon.leagueoflegends.com/cdn/" + currentRealmsVer + "/img/champion/" + currParticipant.getChampion().getKey() + ".png").into(currChampImage);
-            }
-            else{
+            } else {
                 currentGameInfo.setVisibility(View.GONE);
             }
 
             if (summonerSoloRank.equals("UNRANKED")) { // ranked information box
                 headerSummonerName.setText(summoner.getName());
                 headerSummonerRank.setText("UNRANKED");
-                headerSummonerWL.setText("LEVEL " +String.valueOf(summoner.getLevel()));
+                headerSummonerWL.setText("LEVEL " + String.valueOf(summoner.getLevel()));
                 headerSummonerLP.setText("");
             } else {
                 headerSummonerName.setText(summoner.getName());
@@ -588,6 +597,75 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        private class updateTime extends AsyncTask<String, Void, Void> {
+            boolean currGame = true;
+
+            @Override
+            protected void onPreExecute() { //updates current time based on device
+                if (gameStart.getTime() != 0) {
+                    currGameTime += ((System.currentTimeMillis() - start) / 1000);
+                    start = System.currentTimeMillis();
+                }
+
+            }
+
+            @Override
+            protected Void doInBackground(String... strings) {
+                CurrentGame temp = RiotAPI.getCurrentGame(summoner); //checks if game is ended
+                if (temp == null) {
+                    currGame = false;
+                }
+                if (gameStart.getTime() == 0) {
+                    gameStart = temp.getStartTime();
+                    currGameTime = (new Date().getTime() - gameStart.getTime()) / 1000;
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                if (!currGame) {
+                    currentGameInfo.setVisibility(View.GONE);
+                    Toast.makeText(MainActivity.this, "Game has ended", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (gameStart.getTime() != 0) { //displays current time
+                        int minutes = (int) currGameTime / 60;
+                        int seconds = ((int) currGameTime % 60);
+                        String str = String.format("%d:%02d", minutes, seconds);
+                        if (gameStart.getTime() == 0)
+                            Toast.makeText(MainActivity.this, "Game has not yet started", Toast.LENGTH_SHORT).show();
+                        else if (currGameTime < 900)
+                            Toast.makeText(MainActivity.this, str + " (Early Game)", Toast.LENGTH_SHORT).show();
+                        else if (currGameTime < 1800)
+                            Toast.makeText(MainActivity.this, str + " (Mid Game)", Toast.LENGTH_SHORT).show();
+                        else if (currGameTime >= 1800)
+                            Toast.makeText(MainActivity.this,  str + " (Late Game)", Toast.LENGTH_SHORT).show();
+
+
+                    }
+                    updateTimeIndicator();
+                }
+
+            }
+        }
+
+        public void updateTimeIndicator() {
+            try {
+                if (gameStart.getTime() == 0)
+                    gameProgression.setImageResource(R.drawable.grey_dot);
+                else if (currGameTime < 900)
+                    gameProgression.setImageResource(R.drawable.green_dot);
+                else if (currGameTime < 1800)
+                    gameProgression.setImageResource(R.drawable.yellow_dot);
+                else if (currGameTime >= 1800)
+                    gameProgression.setImageResource(R.drawable.red_dot);
+
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     public String getRotation(Context context) {
@@ -625,7 +703,6 @@ public class MainActivity extends AppCompatActivity {
     private class fetchData extends AsyncTask<String, Void, Void> {
 
 
-
         @Override
         protected void onPreExecute() {
 
@@ -642,8 +719,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             Log.i(TAG, "Fetched champ/item data");
+            Toast.makeText(MainActivity.this, "Retrieved latest data", Toast.LENGTH_SHORT).show();
 
         }
     }
+
+
 }
 

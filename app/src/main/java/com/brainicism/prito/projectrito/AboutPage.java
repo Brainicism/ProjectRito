@@ -23,7 +23,7 @@ import com.robrua.orianna.type.exception.APIException;
 public class AboutPage extends AppCompatActivity {
     public static String c = "Smi Uonoda";
     public static String c1 = "Hoizumi Kanayo";
-    public static String c2 = "nukerss";
+    public static String c2 = "Nukerss";
     public static String c3 = "Mishikino Naki";
     public static String c4 = "Honger";
     public static String c5 = "MarkVion";

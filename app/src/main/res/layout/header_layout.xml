@@ -192,7 +192,8 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -222,6 +223,16 @@
                         android:layout_marginLeft="15dp"
                         android:textSize="14sp" />
                 </LinearLayout>
+
+                <ImageView
+                    android:clickable="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/gameProgression"
+                    android:src="@drawable/grey_dot"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp" />
             </LinearLayout>
 
         </LinearLayout>
