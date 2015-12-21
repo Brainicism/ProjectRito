@@ -394,6 +394,7 @@ public class MainActivity extends AppCompatActivity {
 
             matchList = new ArrayList<>();
             matchList.clear();
+
             Log.i(TAG, ranked + " game list of " + gameList.size() + " ranked list of " + matchList.size());
             Log.i("MainActivity", "Converting match references to match objects, ref list size of: " + String.valueOf(cleanedRefList.size()));
             long start = System.nanoTime();
@@ -490,18 +491,22 @@ public class MainActivity extends AppCompatActivity {
 
 
             headerSummonerName = (AutoResizeTextView) findViewById(R.id.headerSummonerName);
-            headerSummonerName.setText(summoner.getName());
             headerSummonerRank = (TextView) findViewById(R.id.headerSummonerRank);
-            headerSummonerRank.setText(summonerSoloRank);
             headerSummonerWL = (TextView) findViewById(R.id.headerSummonerWL);
-            headerSummonerWL.setText(summonerWL);
             headerSummonerLP = (TextView) findViewById(R.id.headerSummonerLP);
-            headerSummonerLP.setText(String.valueOf(summonerLP) + " LP");
             headerRankedInfo = (LinearLayout) findViewById(R.id.headerRankedInfo);
-            if (summonerSoloRank.equals("UNRANKED")) {
-                headerRankedInfo.setVisibility(View.GONE); //hides ranked information if summoner is unranked
+
+
+            if (summonerSoloRank.equals("UNRANKED")) { // ranked information box
+                headerSummonerName.setText(summoner.getName());
+                headerSummonerRank.setText("UNRANKED");
+                headerSummonerWL.setText("LEVEL " +String.valueOf(summoner.getLevel()));
+                headerSummonerLP.setText("");
             } else {
-                headerRankedInfo.setVisibility(View.VISIBLE);
+                headerSummonerName.setText(summoner.getName());
+                headerSummonerRank.setText(summonerSoloRank);
+                headerSummonerWL.setText(summonerWL);
+                headerSummonerLP.setText(String.valueOf(summonerLP) + " LP");
             }
 
             summonerRank = (ImageView) findViewById(R.id.summonerRank);

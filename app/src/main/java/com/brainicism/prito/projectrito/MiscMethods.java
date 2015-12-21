@@ -159,7 +159,7 @@ public class MiscMethods {
     public static int getRankResource(String rank) { //returns appropriate image for summoner's rank
         switch (rank) {
             case "UNRANKED": {
-                return R.drawable.provisional;
+                return R.drawable.unranked;
             }
             case "BRONZE V": {
                 return R.drawable.bronze_v;
