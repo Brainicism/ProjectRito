@@ -109,8 +109,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:orientation="horizontal"
-            android:visibility="visible">
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/promoGame1"
@@ -149,9 +148,87 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
+            android:id="@+id/currGameInfo">
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="#adaaad" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="20dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="In Game"
+                android:id="@+id/textView4"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:layout_gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/currChampImage"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:contextClickable="false"
+                    android:cropToPadding="false"
+                    android:src="@drawable/rumble"
+                    android:layout_marginLeft="10dp" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Rumble"
+                        android:id="@+id/currChamp"
+                        android:layout_marginLeft="15dp"
+                        android:textIsSelectable="false"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Rumble"
+                        android:id="@+id/currMap"
+                        android:layout_marginLeft="15dp"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Rumble"
+                        android:id="@+id/currMode"
+                        android:layout_marginLeft="15dp"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
         <View
             android:layout_width="fill_parent"
-            android:layout_height="1px"
+            android:layout_height="2px"
             android:background="#adaaad" />
     </LinearLayout>
 

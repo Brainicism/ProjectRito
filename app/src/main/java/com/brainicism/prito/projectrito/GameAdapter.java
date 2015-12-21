@@ -225,81 +225,11 @@ public class GameAdapter extends ArrayAdapter<Game> {
         championName.setText(String.valueOf(champ.getName()));
         championName.setTextColor(textColor);
         matchURI.setText(matchHistoryURL);
+        if (!MiscMethods.normalizeSubType(queueTypeText).equals("Unknown"))
+            queueType.setText(MiscMethods.normalizeSubType(queueTypeText));
+        else
+            queueType.setText(String.valueOf(selectedGame.getSubType()));
 
-        switch (queueTypeText) {
-            case "ARAM_UNRANKED_5x5":
-                queueType.setText("ARAM");
-                break;
-            case "ASCENSION":
-                queueType.setText("ASCENSION");
-                break;
-            case "BILGEWATER":
-                queueType.setText("Black Market Brawlers");
-                break;
-            case "BOT":
-                queueType.setText("5v5 Bots");
-                break;
-            case "BOT_3x3":
-                queueType.setText("3v3 Bots");
-                break;
-            case "CAP_5x5":
-                queueType.setText("5v5 Team Builder");
-                break;
-            case "COUNTER_PICK":
-                queueType.setText("Nemesis");
-                break;
-            case "FIRSTBLOOD_1x1":
-                queueType.setText("1v1 Snowdown Showdown");
-                break;
-            case "FIRSTBLOOD_2x2":
-                queueType.setText("2v2 Snowdown Showdown");
-                break;
-            case "HEXAKILL":
-                queueType.setText("Hexakill");
-                break;
-            case "KING_PORO":
-                queueType.setText("Legend of the Poro King");
-                break;
-            case "NIGHTMARE_BOT":
-                queueType.setText("Doom Bots");
-                break;
-            case "NONE":
-                queueType.setText("Custom");
-                break;
-            case "NORMAL":
-                queueType.setText("5v5 Normal");
-                break;
-            case "NORMAL_3x3":
-                queueType.setText("3v3 Normal");
-                break;
-            case "ODIN_UNRANKED":
-                queueType.setText("Dominion");
-                break;
-            case "ONEFORALL_5x5":
-                queueType.setText("One For All");
-                break;
-            case "RANKED_SOLO_5x5":
-                queueType.setText("5v5 Ranked Solo");
-                break;
-            case "RANKED_TEAM_3x3":
-                queueType.setText("3v3 Ranked Teams");
-                break;
-            case "RANKED_TEAM_5x5":
-                queueType.setText("5v5 Ranked Teams");
-                break;
-            case "SR_6x6":
-                queueType.setText("Hexakill");
-                break;
-            case "URF":
-                queueType.setText("Ultra Rapid Fire");
-                break;
-            case "URF BOT":
-                queueType.setText("Ultra Rapid Fire Bots");
-                break;
-            default:
-                queueType.setText(String.valueOf(selectedGame.getSubType()));
-
-        }
 
         return theView;
     }

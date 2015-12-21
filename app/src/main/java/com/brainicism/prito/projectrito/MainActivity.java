@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -31,14 +32,18 @@ import android.widget.Toast;
 import com.robrua.orianna.api.core.MatchAPI;
 import com.robrua.orianna.api.core.RiotAPI;
 import com.robrua.orianna.api.dto.BaseRiotAPI;
+import com.robrua.orianna.type.core.currentgame.CurrentGame;
+import com.robrua.orianna.type.core.currentgame.Participant;
 import com.robrua.orianna.type.core.game.Game;
 import com.robrua.orianna.type.core.league.League;
 import com.robrua.orianna.type.core.league.LeagueEntry;
 import com.robrua.orianna.type.core.league.MiniSeries;
 import com.robrua.orianna.type.core.match.Match;
 import com.robrua.orianna.type.core.matchlist.MatchReference;
+import com.robrua.orianna.type.core.staticdata.Champion;
 import com.robrua.orianna.type.core.summoner.Summoner;
 import com.robrua.orianna.type.exception.APIException;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,13 +68,16 @@ public class MainActivity extends AppCompatActivity {
     public static LinearLayout promoSeries;
     public static LinearLayout headerRankedInfo;
     public static LinearLayout splashScreen;
+    public static LinearLayout currentGameInfo;
     public static RelativeLayout progressScreen;
     public static AutoResizeTextView headerSummonerName; //textview on summonerHeader, display summoner name
     public static TextView headerSummonerRank;
     public static TextView headerSummonerWL;
     public static TextView headerSummonerLP;
+    public static TextView currChamp, currMap, currMode;
     public static ImageView summonerRank; //image showing summoner's rank
     public static ImageView promoGame1, promoGame2, promoGame3, promoGame4, promoGame5;
+    public static ImageView currChampImage;
     public static ListView matchHistory; //listview of matches
     public static Button splashStart, splashSettings;
     public static SharedPreferences prefs;
@@ -87,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     public static pl.droidsonroids.gif.GifImageView progressImage;
     public static boolean ranked = false; //false = normals
     public static Summoner adapterSummoner;
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -239,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     if (String.valueOf(e.getStatus()).equals("SERVICE_UNAVAILABLE") || String.valueOf(e.getStatus()).equals("INTERNAL_SERVER_ERROR")) {
                         serverDown = true;
                         matchRefList = null;
+
                     }
                 }
             } else {
@@ -317,7 +327,9 @@ public class MainActivity extends AppCompatActivity {
 
     private class getSummonerData extends AsyncTask<Void, Void, List<Match>> { //async task for retrieving match data from API
         boolean emptyMatch = false;
-
+        public CurrentGame currentGame;
+        public Champion currentChampion;
+        Participant currParticipant = null;
         @Override
         protected void onPreExecute() {
             if (notFirstRun) {
@@ -335,6 +347,23 @@ public class MainActivity extends AppCompatActivity {
             currentRealmsVer = BaseRiotAPI.getRealm().getV(); //gets current version of ddragon server
             int matchesFound = 0; //count of how many matches of the specified game mode is found
             versionsList = BaseRiotAPI.getVersions();
+            currentGame = RiotAPI.getCurrentGame(summoner);
+            currParticipant = null;
+            try {
+                List <Participant> participants = currentGame.getParticipants();
+                for (int i = 0; i < participants.size() ;i++){
+                    if (participants.get(i).getSummonerID() == summoner.getID()){ //find specific player
+                        currParticipant = participants.get(i);
+
+                        break;
+                    }
+                }
+
+                Log.i(TAG, "current game desu " + currParticipant.getChampion().getKey() + " " + MiscMethods.normalizeMap(String.valueOf(currentGame.getMap()))+ " " +  MiscMethods.normalizeQueueType(String.valueOf(currentGame.getQueueType())));
+            }
+            catch (NullPointerException e){
+                Log.i(TAG, "not in current game");
+            }
             switch (gameModePreference) {
                 case "RANKED_SOLO_5x5": {
                     for (int i = 0; i < matchRefList.size(); i++) {
@@ -489,13 +518,35 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-
             headerSummonerName = (AutoResizeTextView) findViewById(R.id.headerSummonerName);
             headerSummonerRank = (TextView) findViewById(R.id.headerSummonerRank);
             headerSummonerWL = (TextView) findViewById(R.id.headerSummonerWL);
             headerSummonerLP = (TextView) findViewById(R.id.headerSummonerLP);
             headerRankedInfo = (LinearLayout) findViewById(R.id.headerRankedInfo);
-
+            currentGameInfo = (LinearLayout) findViewById(R.id.currGameInfo);
+            currChampImage = (ImageView) findViewById(R.id.currChampImage);
+            currChamp = (TextView) findViewById(R.id.currChamp);
+            currMap = (TextView) findViewById(R.id.currMap);
+            currMode = (TextView) findViewById(R.id.currMode);
+            currentGameInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String fullURL = "http://www.lolnexus.com/"+ serverRegion+"/search?name=" + currParticipant.getSummonerName();
+                    Intent intent = new Intent(getBaseContext(), InternalWebView.class);
+                    intent.putExtra("URL", fullURL);
+                    startActivity(intent);
+                }
+            });
+            if (currentGame != null) { //current game information box
+                currentGameInfo.setVisibility(View.VISIBLE);
+                currChamp.setText(currParticipant.getChampion().getName());
+                currMap.setText(MiscMethods.normalizeMap(String.valueOf(currentGame.getMap())));
+                currMode.setText(MiscMethods.normalizeQueueType(String.valueOf(currentGame.getQueueType())));
+                Picasso.with(getBaseContext()).load("http://ddragon.leagueoflegends.com/cdn/" + currentRealmsVer + "/img/champion/" + currParticipant.getChampion().getKey() + ".png").into(currChampImage);
+            }
+            else{
+                currentGameInfo.setVisibility(View.GONE);
+            }
 
             if (summonerSoloRank.equals("UNRANKED")) { // ranked information box
                 headerSummonerName.setText(summoner.getName());
