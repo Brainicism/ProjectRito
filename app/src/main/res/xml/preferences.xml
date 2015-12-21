@@ -14,7 +14,7 @@
         android:summary="The maximum number of matches shown"
         android:title="Match History Length" />
     <com.brainicism.prito.projectrito.CustomMultilistPreference
-        android:defaultValue="RANKED_SOLO_5x5"
+        android:defaultValue="RECENT_10"
         android:entries="@array/ModeTypes"
         android:entryValues="@array/ModeTypesEntry"
         android:key="gameModePreference"

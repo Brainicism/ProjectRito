@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         progressScreen = (RelativeLayout) findViewById(R.id.progressScreen);
         progressImage = (pl.droidsonroids.gif.GifImageView) findViewById(R.id.progressImage);
         splashScreen.setVisibility(View.VISIBLE);
-        gameModePreference = prefs.getString("gameModePreference", "ALL_RANKED"); //gets data from shared preferences
+        gameModePreference = prefs.getString("gameModePreference", "RECENT_10"); //gets data from shared preferences
         serverRegion = prefs.getString("serverRegion", "NA");
         matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
         MiscMethods.initialAPISetup(); //updates API settings
@@ -201,13 +201,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             hideKeyboard();
             screenRotation = getRotation(getBaseContext());
-            gameModePreference = prefs.getString("gameModePreference", "RANKED"); //gets data from shared preferences
+            gameModePreference = prefs.getString("gameModePreference", "RECENT_10"); //gets data from shared preferences
             serverRegion = prefs.getString("serverRegion", "NA");
             matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
-            if (gameModePreference.equals("RECENT_10"))
-                ranked = false;
-            else
-                ranked = true;
+            ranked = !gameModePreference.equals("RECENT_10");
             MiscMethods.regionSetup();
         }
 
@@ -397,6 +394,7 @@ public class MainActivity extends AppCompatActivity {
 
             matchList = new ArrayList<>();
             matchList.clear();
+            Log.i(TAG, ranked + " game list of " + gameList.size() + " ranked list of " + matchList.size());
             Log.i("MainActivity", "Converting match references to match objects, ref list size of: " + String.valueOf(cleanedRefList.size()));
             long start = System.nanoTime();
             try {
