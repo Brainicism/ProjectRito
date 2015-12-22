@@ -1,4 +1,4 @@
-package com.brainicism.prito.projectrito;
+package com.brainicism.projectrito;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.robrua.orianna.api.core.MatchAPI;
 import com.robrua.orianna.api.core.RiotAPI;
 import com.robrua.orianna.api.dto.BaseRiotAPI;
+import com.robrua.orianna.store.Cache;
 import com.robrua.orianna.type.core.currentgame.CurrentGame;
 import com.robrua.orianna.type.core.currentgame.Participant;
 import com.robrua.orianna.type.core.game.Game;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     public static String summonerWL;
     public static String summonerSoloRank;
     public static String gameModePreference, serverRegion;
+    public static String prevServer;
     public static final String TAG = MainActivity.class.getName();
     public boolean notFirstRun = false;
 
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings: // intents to preference activity
-                Intent i = new Intent(this, MyPreferenceActivity.class);
+                Intent i = new Intent(this, PreferenceActivity.class);
                 startActivity(i);
                 break;
             case R.id.refresh_button: {
@@ -161,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.i(TAG, "ON CREATE");
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         splashStart = (Button) findViewById(R.id.splashStartButton); //initializes splash screen
         splashStart.setOnClickListener(new View.OnClickListener() { //expands search bar when pressed
             @Override
@@ -172,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         splashSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, MyPreferenceActivity.class);
+                Intent i = new Intent(MainActivity.this, PreferenceActivity.class);
                 startActivity(i);
             }
         });
@@ -215,12 +218,26 @@ public class MainActivity extends AppCompatActivity {
             matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
             ranked = !gameModePreference.equals("RECENT_10");
             MiscMethods.regionSetup();
+            if (prevServer == null){
+                prevServer = serverRegion;
+            }
         }
 
         @Override
         protected Void doInBackground(String... strings) {
             try {
+                Log.i(TAG, prevServer + " > " + serverRegion);
+                if (!prevServer.equals(serverRegion)){ //resets cache when changing servers
+                    RiotAPI.setDataStore(new Cache());
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "Updating region data", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                prevServer = serverRegion;
                 summoner = RiotAPI.getSummonerByName(summonerName); //attempts to get summoner from input summoner name
+                Log.i(TAG, "Summoner information " + summoner.getID() + " " + summoner.getName() + " " + summoner.getProfileIconID() + "| Searched on: " + serverRegion);
             } catch (APIException e) //called when searched summoner does no exist
             {
                 Log.i("MainActivity", String.valueOf(e.getStatus()));
@@ -308,8 +325,6 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     } else {
-                        Log.i(TAG, "begin retrieve smmoner data");
-
                         retrieveSummonerData(); //executes data request if requirements are satisfied
                     }
                 }
@@ -361,7 +376,6 @@ public class MainActivity extends AppCompatActivity {
                 currGameTime = (new Date().getTime() - gameStart.getTime()) / 1000;
                 start = System.currentTimeMillis();
             } catch (NullPointerException e) {
-                Log.i(TAG, "not in current game");
             }
             switch (gameModePreference) {
                 case "RANKED_SOLO_5x5": {
@@ -412,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
                 case "RECENT_10": {
 
                     if (matchHistoryLength < gameList.size()) {
-                        gameList = gameList.subList(0, 10);
+                        gameList = gameList.subList(0, matchHistoryLength);
                     } else {
                         gameList = gameList.subList(0, (gameList.size()));
 
@@ -629,21 +643,17 @@ public class MainActivity extends AppCompatActivity {
                     currentGameInfo.setVisibility(View.GONE);
                     Toast.makeText(MainActivity.this, "Game has ended", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (gameStart.getTime() != 0) { //displays current time
-                        int minutes = (int) currGameTime / 60;
-                        int seconds = ((int) currGameTime % 60);
-                        String str = String.format("%d:%02d", minutes, seconds);
-                        if (gameStart.getTime() == 0)
-                            Toast.makeText(MainActivity.this, "Game has not yet started", Toast.LENGTH_SHORT).show();
-                        else if (currGameTime < 900)
-                            Toast.makeText(MainActivity.this, str + " (Early Game)", Toast.LENGTH_SHORT).show();
-                        else if (currGameTime < 1800)
-                            Toast.makeText(MainActivity.this, str + " (Mid Game)", Toast.LENGTH_SHORT).show();
-                        else if (currGameTime >= 1800)
-                            Toast.makeText(MainActivity.this,  str + " (Late Game)", Toast.LENGTH_SHORT).show();
-
-
-                    }
+                    int minutes = (int) currGameTime / 60;
+                    int seconds = ((int) currGameTime % 60);
+                    String str = String.format("%d:%02d", minutes, seconds);
+                    if (gameStart.getTime() == 0)
+                        Toast.makeText(MainActivity.this, "Game has not yet started", Toast.LENGTH_SHORT).show();
+                    else if (currGameTime < 900)
+                        Toast.makeText(MainActivity.this, str + " (Early Game)", Toast.LENGTH_SHORT).show();
+                    else if (currGameTime < 1800)
+                        Toast.makeText(MainActivity.this, str + " (Mid Game)", Toast.LENGTH_SHORT).show();
+                    else if (currGameTime >= 1800)
+                        Toast.makeText(MainActivity.this, str + " (Late Game)", Toast.LENGTH_SHORT).show();
                     updateTimeIndicator();
                 }
 
@@ -712,7 +722,6 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(String... strings) {
             RiotAPI.getChampions();
             RiotAPI.getItems();
-
             return null;
         }
 

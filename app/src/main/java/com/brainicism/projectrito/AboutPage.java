@@ -1,4 +1,4 @@
-package com.brainicism.prito.projectrito;
+package com.brainicism.projectrito;
 
 import android.content.Context;
 import android.content.Intent;
@@ -82,7 +82,7 @@ public class AboutPage extends AppCompatActivity {
             }
         });
 
-        span = "Developed and maintained by \n " + c + " \n Special thanks to : \n " + c1 + " \n " + c2 + " \n " + c3 + " \n " + c4 + " \n " + c5 + " \n " + c6 + " \n " + c7 + " \n " + c8;
+        span = "Developed and maintained by \n " + c + " \n Painstakingly bug-tested by  \n " + c1 + " \n Special thanks to  \n " + c2 + " \n " + c3 + " \n " + c4 + " \n " + c5 + " \n " + c6 + " \n " + c7 + " \n " + c8;
         ss = new SpannableString(span);
 
         addClickableSpan(44492014, getApplicationContext());
@@ -164,7 +164,7 @@ public class AboutPage extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            span = "Developed and maintained by \n " + c + " \n Special thanks to : \n " + c1 + " \n " + c2 + " \n " + c3 + " \n " + c4 + " \n " + c5 + " \n " + c6 + " \n " + c7 + " \n " + c8;
+            span = "Developed and maintained by \n " + c + " \n Painstakingly bug-tested by  \n " + c1 + " \n Special thanks to  \n " + c2 + " \n " + c3 + " \n " + c4 + " \n " + c5 + " \n " + c6 + " \n " + c7 + " \n " + c8;
             ss = new SpannableString(span);
             contributorText.setLinkTextColor(Color.parseColor("#3366BB"));
 

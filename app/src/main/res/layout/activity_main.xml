@@ -4,7 +4,7 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context="com.brainicism.projectrito.MainActivity">
 
     <LinearLayout
         android:orientation="vertical"

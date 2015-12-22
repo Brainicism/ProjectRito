@@ -1,4 +1,4 @@
-package com.brainicism.prito.projectrito;
+package com.brainicism.projectrito;
 
 import android.annotation.TargetApi;
 import android.content.Context;

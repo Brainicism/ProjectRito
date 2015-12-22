@@ -1,17 +1,18 @@
-package com.brainicism.prito.projectrito;
+package com.brainicism.projectrito;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 
 
-public class MyPreferenceActivity extends AppCompatActivity {
+public class PreferenceActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
     }
+
 
     public static class MyPreferenceFragment extends PreferenceFragment
     {
@@ -20,6 +21,7 @@ public class MyPreferenceActivity extends AppCompatActivity {
         {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
+
         }
     }
 }

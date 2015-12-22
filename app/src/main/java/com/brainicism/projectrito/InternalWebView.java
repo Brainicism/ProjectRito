@@ -1,10 +1,11 @@
-package com.brainicism.prito.projectrito;
+package com.brainicism.projectrito;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
 
 public class InternalWebView extends Activity {
     String URL;

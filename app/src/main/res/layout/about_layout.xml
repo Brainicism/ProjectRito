@@ -22,7 +22,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:layout_weight="0.5"
-                android:src="@drawable/teemoloading" />
+                android:src="@drawable/mordeloading" />
 
             <TextView
                 android:id="@+id/contributionsText"

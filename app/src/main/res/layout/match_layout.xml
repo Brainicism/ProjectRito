@@ -101,7 +101,7 @@
 
             </LinearLayout>
 
-            <com.brainicism.prito.projectrito.AutoResizeTextView
+            <com.brainicism.projectrito.AutoResizeTextView
                 android:id="@+id/scoreText"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

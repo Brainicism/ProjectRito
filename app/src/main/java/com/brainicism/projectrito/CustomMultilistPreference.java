@@ -1,4 +1,4 @@
-package com.brainicism.prito.projectrito;
+package com.brainicism.projectrito;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;
