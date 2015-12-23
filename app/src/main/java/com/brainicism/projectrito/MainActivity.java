@@ -105,18 +105,33 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings: // intents to preference activity
                 Intent i = new Intent(this, PreferenceActivity.class);
                 startActivity(i);
+                try {
+                    this.getCurrentFocus().clearFocus();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.refresh_button: {
                 if (notFirstRun) //if a summoner has already done a search
                 {
                     checkValidSummoner check = new checkValidSummoner();
                     check.execute();
+                    try {
+                        this.getCurrentFocus().clearFocus();
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
             case R.id.about_page:
-                Intent j = new Intent(this, AboutPage.class);
+                Intent j = new Intent(this, AboutPage.class); //about page
                 startActivity(j);
+                try {
+                    this.getCurrentFocus().clearFocus();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
                 break;
             default:
                 return true;
@@ -128,17 +143,26 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) { //inflates options menu
         getMenuInflater().inflate(R.menu.menu_main, menu);
         searchItem = menu.findItem(R.id.action_search);
-        final android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+        final android.support.v7.widget.SearchView searchView;
+        searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                serverRegion = prefs.getString("serverRegion", "NA"); //updates query hint with current search region
+                searchView.setQueryHint("Current Server: " + serverRegion);
+            }
+        });
         searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) { //on entry of summoner name
-                if (!isNetworkAvailable()) { //checks for internet conenction
+                if (!isNetworkAvailable()) { //checks for internet connection
                     Toast.makeText(MainActivity.this, "ERROR: No internet connection", Toast.LENGTH_SHORT).show();
                 } else {
                     summonerName = String.valueOf(searchView.getQuery()); //gets summoner name from search bar
                     checkValidSummoner check = new checkValidSummoner(); // begins to search for summmoner from server
                     check.execute();
-                    searchItem.collapseActionView(); //collapses search var
+                    searchItem.collapseActionView(); //collapses search bar
                 }
                 return false;
             }
@@ -218,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
             matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
             ranked = !gameModePreference.equals("RECENT_10");
             MiscMethods.regionSetup();
-            if (prevServer == null){
+            if (prevServer == null) {
                 prevServer = serverRegion;
             }
         }
@@ -227,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(String... strings) {
             try {
                 Log.i(TAG, prevServer + " > " + serverRegion);
-                if (!prevServer.equals(serverRegion)){ //resets cache when changing servers
+                if (!prevServer.equals(serverRegion)) { //resets cache when changing servers
                     RiotAPI.setDataStore(new Cache());
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -376,7 +400,9 @@ public class MainActivity extends AppCompatActivity {
                 currGameTime = (new Date().getTime() - gameStart.getTime()) / 1000;
                 start = System.currentTimeMillis();
             } catch (NullPointerException e) {
+                e.printStackTrace();
             }
+
             switch (gameModePreference) {
                 case "RANKED_SOLO_5x5": {
                     for (int i = 0; i < matchRefList.size(); i++) {
@@ -630,7 +656,13 @@ public class MainActivity extends AppCompatActivity {
                     currGame = false;
                 }
                 if (gameStart.getTime() == 0) {
-                    gameStart = temp.getStartTime();
+                    try {
+                        gameStart = temp.getStartTime();
+                    }
+                    catch (NullPointerException e)
+                    {
+                        e.printStackTrace();
+                    }
                     currGameTime = (new Date().getTime() - gameStart.getTime()) / 1000;
                 }
 

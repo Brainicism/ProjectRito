@@ -6,6 +6,7 @@ import com.robrua.orianna.api.core.RiotAPI;
 import com.robrua.orianna.type.api.LoadPolicy;
 import com.robrua.orianna.type.api.RateLimit;
 import com.robrua.orianna.type.core.common.Region;
+import com.robrua.orianna.type.exception.APIException;
 
 public class MiscMethods {
     public static final String TAG = MiscMethods.class.getName();
@@ -164,52 +165,58 @@ public class MiscMethods {
 
     public static void regionSetup() {
         //sets API settings based on server
-        switch (MainActivity.serverRegion) {
-            case "NA": {
-                RiotAPI.setRegion(Region.NA);
-                break;
+        try {
+            switch (MainActivity.serverRegion) {
+                case "NA": {
+                    RiotAPI.setRegion(Region.NA);
+                    break;
+                }
+                case "KR": {
+                    RiotAPI.setRegion(Region.KR);
+                    break;
+                }
+                case "EUW": {
+                    RiotAPI.setRegion(Region.EUW);
+                    break;
+                }
+                case "EUNE": {
+                    RiotAPI.setRegion(Region.EUNE);
+                    break;
+                }
+                case "BR": {
+                    RiotAPI.setRegion(Region.BR);
+                    break;
+                }
+                case "TR": {
+                    RiotAPI.setRegion(Region.TR);
+                    break;
+                }
+                case "LAS": {
+                    RiotAPI.setRegion(Region.LAS);
+                    break;
+                }
+                case "LAN": {
+                    RiotAPI.setRegion(Region.LAN);
+                    break;
+                }
+                case "OCE": {
+                    RiotAPI.setRegion(Region.OCE);
+                    break;
+                }
+                case "RU": {
+                    RiotAPI.setRegion(Region.RU);
+                    break;
+                }
+                default: {
+                    RiotAPI.setRegion(Region.NA);
+                    Log.i("hello", "unknown server, using NA");
+                    break;
+                }
             }
-            case "KR": {
-                RiotAPI.setRegion(Region.KR);
-                break;
-            }
-            case "EUW": {
-                RiotAPI.setRegion(Region.EUW);
-                break;
-            }
-            case "EUNE": {
-                RiotAPI.setRegion(Region.EUNE);
-                break;
-            }
-            case "BR": {
-                RiotAPI.setRegion(Region.BR);
-                break;
-            }
-            case "TR": {
-                RiotAPI.setRegion(Region.TR);
-                break;
-            }
-            case "LAS": {
-                RiotAPI.setRegion(Region.LAS);
-                break;
-            }
-            case "LAN": {
-                RiotAPI.setRegion(Region.LAN);
-                break;
-            }
-            case "OCE": {
-                RiotAPI.setRegion(Region.OCE);
-                break;
-            }
-            case "RU": {
-                RiotAPI.setRegion(Region.RU);
-                break;
-            }
-            default: {
-                RiotAPI.setRegion(Region.NA);
-                Log.i("hello", "unknown server, using NA");
-                break;
-            }
+        }
+        catch (APIException e)
+        {
+            e.printStackTrace();
         }
     }
 
