@@ -11,7 +11,6 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -156,7 +155,7 @@ public class AboutPage extends AppCompatActivity {
                 c7 = RiotAPI.getSummonerName(52401618);
                 c8 = RiotAPI.getSummonerName(36814870);
             } catch (APIException e) {
-                Log.i(TAG, String.valueOf(e.getStatus()));
+                e.printStackTrace();
             }
 
             return null;

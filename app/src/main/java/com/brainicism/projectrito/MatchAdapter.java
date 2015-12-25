@@ -24,10 +24,8 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         super(context, R.layout.match_layout, matches);
     }
 
-    //            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|layoutDirection"
     private int textColor;
     private double summonerGold;
-    private Long matchID; //the match id of the current position on the list
     private Long kills, deaths, assists; //various stats
     private Long[] itemID = new Long[7]; //item id for each item
     private Long cs;
@@ -97,54 +95,34 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         divider = theView.findViewById(R.id.divider);
         listOfParticipants = selectedMatch.getParticipants(); //gets a list of the participants in the match
         for (int i = 0; i < listOfParticipants.size(); i++) {
-            if (listOfParticipants.get(i).getSummoner().getID() == MainActivity.adapterSummoner.getID()) { //finds the summoner searched within the list of participants
+            if (listOfParticipants.get(i).getSummonerID() == MainActivity.adapterSummoner.getID()) { //finds the summoner searched within the list of participants
                 summoner = listOfParticipants.get(i);
                 break;
             }
         }
-        if (MainActivity.ranked) {
-            win = summoner.getStats().getWinner();  //gathers stats of the summoner being searched
-            champ = summoner.getChampion();
-            kills = summoner.getStats().getKills();
-            deaths = summoner.getStats().getDeaths();
-            assists = summoner.getStats().getAssists();
-            summonerGold = (double) summoner.getStats().getGoldEarned();
-            summonerGold = ((double) Math.round(summonerGold / 1000 * 10)) / 10;
-            cs = summoner.getStats().getMinionsKilled() + summoner.getStats().getNeutralMinionsKilledEnemyJungle() + summoner.getStats().getNeutralMinionsKilledTeamJungle();
-            queueTypeText = String.valueOf(selectedMatch.getQueueType());
-            itemID[0] = summoner.getStats().getItem0ID(); //gets item id's
-            itemID[1] = summoner.getStats().getItem1ID();
-            itemID[2] = summoner.getStats().getItem2ID();
-            itemID[3] = summoner.getStats().getItem3ID();
-            itemID[4] = summoner.getStats().getItem4ID();
-            itemID[5] = summoner.getStats().getItem5ID();
-            itemID[6] = summoner.getStats().getItem6ID();
-            summonerSpellKey[0] = summoner.getSummonerSpell1().getKey(); //gets item summoner spell keys
-            summonerSpellKey[1] = summoner.getSummonerSpell2().getKey();
-            matchParticipantID = summoner.getMatchHistoryURI(); //gets the second parameter for detailed match history
-            matchParticipantID = matchParticipantID.replaceAll("[^-?0-9]+", "");
-            matchParticipantID = matchParticipantID.substring(2, matchParticipantID.length());
-        }
-        else{
-            win = MainActivity.gameList.get(0).getStats().getWin();
-            champ = MainActivity.gameList.get(0).getChampion();
-            kills = (long) MainActivity.gameList.get(0).getStats().getKills();
-            deaths = (long) MainActivity.gameList.get(0).getStats().getDeaths();
-            assists = (long) MainActivity.gameList.get(0).getStats().getAssists();
-            summonerGold = (long) MainActivity.gameList.get(0).getStats().getGoldEarned();
-            summonerGold = ((double) Math.round(summonerGold / 1000 * 10)) / 10;
-            cs = (long)MainActivity.gameList.get(0).getStats().getMinionsKilled() + MainActivity.gameList.get(0).getStats().getNeutralMinionsKilledEnemyJungle() + MainActivity.gameList.get(0).getStats().getNeutralMinionsKilledYourJungle();
-            queueTypeText = MainActivity.gameList.get(0).getMode().name();
-            itemID[0] = MainActivity.gameList.get(0).getStats().getItem0ID();
-            itemID[1] = MainActivity.gameList.get(0).getStats().getItem1ID();
-            itemID[2] = MainActivity.gameList.get(0).getStats().getItem2ID();
-            itemID[3] = MainActivity.gameList.get(0).getStats().getItem3ID();
-            itemID[4] = MainActivity.gameList.get(0).getStats().getItem4ID();
-            itemID[5] = MainActivity.gameList.get(0).getStats().getItem5ID();
-            itemID[6] = MainActivity.gameList.get(0).getStats().getItem6ID();
-            summonerSpellKey[0] = MainActivity.gameList.get(0).getSummonerSpell1().getKey();
-            summonerSpellKey[1] = MainActivity.gameList.get(0).getSummonerSpell2().getKey();
-        }
+        win = summoner.getStats().getWinner();  //gathers stats of the summoner being searched
+        champ = summoner.getChampion();
+        kills = summoner.getStats().getKills();
+        deaths = summoner.getStats().getDeaths();
+        assists = summoner.getStats().getAssists();
+        summonerGold = (double) summoner.getStats().getGoldEarned();
+        summonerGold = ((double) Math.round(summonerGold / 1000 * 10)) / 10;
+        cs = summoner.getStats().getMinionsKilled() + summoner.getStats().getNeutralMinionsKilledEnemyJungle() + summoner.getStats().getNeutralMinionsKilledTeamJungle();
+        queueTypeText = String.valueOf(selectedMatch.getQueueType());
+        itemID[0] = summoner.getStats().getItem0ID(); //gets item id's
+        itemID[1] = summoner.getStats().getItem1ID();
+        itemID[2] = summoner.getStats().getItem2ID();
+        itemID[3] = summoner.getStats().getItem3ID();
+        itemID[4] = summoner.getStats().getItem4ID();
+        itemID[5] = summoner.getStats().getItem5ID();
+        itemID[6] = summoner.getStats().getItem6ID();
+        summonerSpellKey[0] = summoner.getSummonerSpell1().getKey(); //gets item summoner spell keys
+        summonerSpellKey[1] = summoner.getSummonerSpell2().getKey();
+        matchParticipantID = summoner.getMatchHistoryURI(); //gets the second parameter for detailed match history
+        matchParticipantID = matchParticipantID.replaceAll("[^-?0-9]+", "");
+        matchParticipantID = matchParticipantID.substring(2, matchParticipantID.length());
+
+
         int currentCutoff = selectedMatch.getVersion().indexOf(".", selectedMatch.getVersion().indexOf(".") + 1);
         for (int i = 0; i < MainActivity.versionsList.size(); i++) {
             int cutoff = MainActivity.versionsList.get(i).indexOf(".", MainActivity.versionsList.get(0).indexOf(".") + 1); //cutoff for realms version number
@@ -153,8 +131,8 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 break;
             }
         }
-        //INDEPENDENT OF TYPE
 
+        //INDEPENDENT OF TYPE
         switch (MainActivity.serverRegion) {
             case "NA": {
                 matchHistoryURL = "http://matchhistory.na.leagueoflegends.com/en/#match-details/NA1/" + selectedMatch.getID() + "/" + matchParticipantID + "?tab=overview";
@@ -217,7 +195,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         }
 
 
-
         Picasso.with(getContext()).load(itemURL[0]).into(item0); //loads image url's into image views
         Picasso.with(getContext()).load(itemURL[1]).into(item1);
         Picasso.with(getContext()).load(itemURL[2]).into(item2);
@@ -227,7 +204,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         Picasso.with(getContext()).load(itemURL[6]).into(item6);
         Picasso.with(getContext()).load(summonerSpellURL[0]).into(summonerSpell1);
         Picasso.with(getContext()).load(summonerSpellURL[1]).into(summonerSpell2);
-        if (MainActivity.screenRotation.equals("landscape")) { // hides/shows imageviews based on orientation of the device
+        if (MainActivity.screenRotation.equals("landscape")) { //changes layout based on orientation of the device
             item6.setVisibility(View.VISIBLE);
             summonerSpellBox.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
@@ -238,7 +215,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
             divider.setVisibility(View.GONE);
             goldCs.setVisibility(View.GONE);
         }
-        if (win) { //changes color of text based on win/victory
+        if (win) { //changes colors of layout based on win/victory
             textColor = Color.parseColor("#4CAF50");
             goldIcon.setImageResource(R.drawable.ic_control_point_duplicate_black_48dp_green);
             csIcon.setImageResource(R.drawable.ic_android_black_48dp_green);
@@ -253,7 +230,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 kdaValue = Math.round(kdaValue * 100.0) / 100.0;
                 score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists) + " (" + String.valueOf(kdaValue) + ")");
             } else {
-                score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists) + "(Flawless)");
+                score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists) + "(∞)");
 
             }
         } else {
@@ -281,29 +258,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
             case "RANKED_TEAM_3x3":
                 queueType.setText("Ranked Team 3v3");
                 break;
-            case "ARAM":
-                queueType.setText("ARAM");
-                break;
-            case "CLASSIC":
-                queueType.setText("Normal");
-                break;
-            case "FIRSTBLOOD":
-                queueType.setText("Snowdown Showdown");
-                break;
-            case "KINGPORO":
-                queueType.setText("Legend of the Poro King");
-                break;
-            case "ASCENSION":
-                queueType.setText("Ascension");
-                break;
-            case "ODIN":
-                queueType.setText("Odin");
-                break;
-            case "ONEFORALL":
-                queueType.setText("One For All");
-                break;
-
-
         }
 
         return theView;

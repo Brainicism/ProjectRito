@@ -42,12 +42,21 @@
                     android:layout_height="0dp"
                     android:layout_gravity="center_horizontal"
                     android:fontFamily="sans-serif-thin"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="10dp"
+                    android:gravity="center_horizontal|bottom"
+                    android:paddingTop="5dp"
+                    android:singleLine="true"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="SummonerName"
                     android:textSize="30sp"
                     android:layout_weight="1" />
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#90909090" />
 
                 <LinearLayout
                     android:id="@+id/headerRankedInfo"
@@ -55,14 +64,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_weight="2">
-
-                    <View
-                        android:id="@+id/divider"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
-                        android:background="#90909090" />
 
                     <TextView
                         android:id="@+id/headerSummonerRank"

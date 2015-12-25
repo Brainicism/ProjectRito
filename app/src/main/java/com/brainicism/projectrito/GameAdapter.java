@@ -25,11 +25,9 @@ public class GameAdapter extends ArrayAdapter<Game> {
 
     private int textColor;
     private double summonerGold;
-    private Long matchID; //the match id of the current position on the list
     private Long kills, deaths, assists; //various stats
     private Long[] itemID = new Long[7]; //item id for each item
     private Long cs;
-    public static final String TAG = GameAdapter.class.getName();
     private String[] itemURL = new String[7]; //image url for each item
     private String champIconURL; //image url for champion image
     private String[] summonerSpellKey = new String[2];
@@ -87,6 +85,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
         queueType = (TextView) theView.findViewById(R.id.queueType);
         matchURI = (TextView) theView.findViewById(R.id.matchURI);
         summonerSpellBox = (LinearLayout) theView.findViewById(R.id.summonerSpellBox);
+
         selectedGame = getItem(position); //gets the match based on the index on the list
         divider = theView.findViewById(R.id.divider);
         win = selectedGame.getStats().getWin();
@@ -207,7 +206,7 @@ public class GameAdapter extends ArrayAdapter<Game> {
                 kdaValue = Math.round(kdaValue * 100.0) / 100.0;
                 score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists) + " (" + String.valueOf(kdaValue) + ")");
             } else {
-                score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists) + "(Flawless)");
+                score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists) + "(∞)");
 
             }
         } else {
@@ -229,8 +228,6 @@ public class GameAdapter extends ArrayAdapter<Game> {
             queueType.setText(MiscMethods.normalizeSubType(queueTypeText));
         else
             queueType.setText(String.valueOf(selectedGame.getSubType()));
-
-
         return theView;
     }
 

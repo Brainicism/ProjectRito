@@ -1,6 +1,5 @@
 package com.brainicism.projectrito;
 
-import android.util.Log;
 
 import com.robrua.orianna.api.core.RiotAPI;
 import com.robrua.orianna.type.api.LoadPolicy;
@@ -118,17 +117,17 @@ public class MiscMethods {
             case "BILGEWATER":
                 return ("Black Market Brawlers");
             case "BOT":
-                return ("5v5 Bots");
+                return ("Bots 5v5");
             case "BOT_3x3":
-                return ("3v3 Bots");
+                return ("Bots 5v5");
             case "CAP_5x5":
                 return ("5v5 Team Builder");
             case "COUNTER_PICK":
                 return ("Nemesis");
             case "FIRSTBLOOD_1x1":
-                return ("1v1 Snowdown Showdown");
+                return ("Snowdown Showdown 1v1");
             case "FIRSTBLOOD_2x2":
-                return ("2v2 Snowdown Showdown");
+                return ("Snowdown Showdown 2v2");
             case "HEXAKILL":
                 return ("Hexakill");
             case "KING_PORO":
@@ -138,19 +137,19 @@ public class MiscMethods {
             case "NONE":
                 return ("Custom");
             case "NORMAL":
-                return ("5v5 Normal");
+                return ("Normal 5v5");
             case "NORMAL_3x3":
-                return ("3v3 Normal");
+                return ("Normal 3v3");
             case "ODIN_UNRANKED":
                 return ("Dominion");
             case "ONEFORALL_5x5":
                 return ("One For All");
             case "RANKED_SOLO_5x5":
-                return ("5v5 Ranked Solo");
+                return ("Ranked Solo 5v5");
             case "RANKED_TEAM_3x3":
-                return ("3v3 Ranked Teams");
+                return ("Ranked Teams 3v3");
             case "RANKED_TEAM_5x5":
-                return ("5v5 Ranked Teams");
+                return ("Ranked Teams 5v5");
             case "SR_6x6":
                 return ("Hexakill");
             case "URF":
@@ -209,7 +208,6 @@ public class MiscMethods {
                 }
                 default: {
                     RiotAPI.setRegion(Region.NA);
-                    Log.i("hello", "unknown server, using NA");
                     break;
                 }
             }
@@ -305,11 +303,7 @@ public class MiscMethods {
                 return R.drawable.lululoading2;
             case 6:
                 return R.drawable.zedloading;
-
-
         }
-
-
         return 0;
     }
 
