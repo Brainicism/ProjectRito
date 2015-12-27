@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.robrua.orianna.type.core.game.Game;
 import com.robrua.orianna.type.core.staticdata.Champion;
+import com.robrua.orianna.type.exception.APIException;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -97,15 +98,20 @@ public class GameAdapter extends ArrayAdapter<Game> {
         summonerGold = ((double) Math.round(summonerGold / 1000 * 10)) / 10;
         cs = (long) selectedGame.getStats().getMinionsKilled() + selectedGame.getStats().getNeutralMinionsKilledEnemyJungle() + selectedGame.getStats().getNeutralMinionsKilledYourJungle();
         queueTypeText = selectedGame.getSubType().name();
-        itemID[0] = selectedGame.getStats().getItem0ID();
-        itemID[1] = selectedGame.getStats().getItem1ID();
-        itemID[2] = selectedGame.getStats().getItem2ID();
-        itemID[3] = selectedGame.getStats().getItem3ID();
-        itemID[4] = selectedGame.getStats().getItem4ID();
-        itemID[5] = selectedGame.getStats().getItem5ID();
-        itemID[6] = selectedGame.getStats().getItem6ID();
-        summonerSpellKey[0] = selectedGame.getSummonerSpell1().getKey();
-        summonerSpellKey[1] = selectedGame.getSummonerSpell2().getKey();
+        try {
+            itemID[0] = selectedGame.getStats().getItem0ID();
+            itemID[1] = selectedGame.getStats().getItem1ID();
+            itemID[2] = selectedGame.getStats().getItem2ID();
+            itemID[3] = selectedGame.getStats().getItem3ID();
+            itemID[4] = selectedGame.getStats().getItem4ID();
+            itemID[5] = selectedGame.getStats().getItem5ID();
+            itemID[6] = selectedGame.getStats().getItem6ID();
+            summonerSpellKey[0] = selectedGame.getSummonerSpell1().getKey();
+            summonerSpellKey[1] = selectedGame.getSummonerSpell2().getKey();
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
 
         switch (MainActivity.serverRegion) {
             case "NA": {

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
@@ -286,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else { //if recent 10
                 try {
-                    gameList = RiotAPI.getRecentGames(summoner.getID());
+                    gameList = RiotAPI.getRecentGames(summoner);
                 } catch (NullPointerException e) { //catches exception when summoner has no matches played
                     e.printStackTrace();
                     gameList = null;
@@ -295,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
                         serverDown = true;
                         gameList = null;
                     }
+                    e.printStackTrace();
                 }
             }
 
@@ -438,6 +440,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 }
+
                 //case not needed for recent_10
             }
 
@@ -641,7 +644,7 @@ public class MainActivity extends AppCompatActivity {
                 if (temp == null) { //if game has ended
                     currGame = false;
                 }
-                if (currGameID == temp.getID())// if still the same game as when previously checked, update time
+                else if (currGameID == temp.getID())// if still the same game as when previously checked, update time
                 {
                     if (gameStart.getTime() == 0) { //if game hasnt begun, wait for game to start and get new time
                         gameStart = temp.getStartTime();

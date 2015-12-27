@@ -109,15 +109,21 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         summonerGold = ((double) Math.round(summonerGold / 1000 * 10)) / 10;
         cs = summoner.getStats().getMinionsKilled() + summoner.getStats().getNeutralMinionsKilledEnemyJungle() + summoner.getStats().getNeutralMinionsKilledTeamJungle();
         queueTypeText = String.valueOf(selectedMatch.getQueueType());
-        itemID[0] = summoner.getStats().getItem0ID(); //gets item id's
-        itemID[1] = summoner.getStats().getItem1ID();
-        itemID[2] = summoner.getStats().getItem2ID();
-        itemID[3] = summoner.getStats().getItem3ID();
-        itemID[4] = summoner.getStats().getItem4ID();
-        itemID[5] = summoner.getStats().getItem5ID();
-        itemID[6] = summoner.getStats().getItem6ID();
-        summonerSpellKey[0] = summoner.getSummonerSpell1().getKey(); //gets item summoner spell keys
-        summonerSpellKey[1] = summoner.getSummonerSpell2().getKey();
+        try {
+            itemID[0] = summoner.getStats().getItem0ID(); //gets item id's
+            itemID[1] = summoner.getStats().getItem1ID();
+            itemID[2] = summoner.getStats().getItem2ID();
+            itemID[3] = summoner.getStats().getItem3ID();
+            itemID[4] = summoner.getStats().getItem4ID();
+            itemID[5] = summoner.getStats().getItem5ID();
+            itemID[6] = summoner.getStats().getItem6ID();
+            summonerSpellKey[0] = summoner.getSummonerSpell1().getKey(); //gets item summoner spell keys
+            summonerSpellKey[1] = summoner.getSummonerSpell2().getKey();
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
+
         matchParticipantID = summoner.getMatchHistoryURI(); //gets the second parameter for detailed match history
         matchParticipantID = matchParticipantID.replaceAll("[^-?0-9]+", "");
         matchParticipantID = matchParticipantID.substring(2, matchParticipantID.length());

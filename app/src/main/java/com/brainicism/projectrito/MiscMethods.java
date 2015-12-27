@@ -113,7 +113,7 @@ public class MiscMethods {
             case "ARAM_UNRANKED_5x5":
                 return ("ARAM");
             case "ASCENSION":
-                return ("ASCENSION");
+                return ("Ascension");
             case "BILGEWATER":
                 return ("Black Market Brawlers");
             case "BOT":
