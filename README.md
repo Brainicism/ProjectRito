@@ -5,7 +5,7 @@
 </p>
 
 
-Project Rito is a minimalist Android app that simply displays a summoner's match history. It was developed to be used as an alternative to popular web-based match history sites such as [OP.GG](http://na.op.gg/) or [LolKing](lolking.net). Project Rito has two modes: condensed and detailed.
+Project Rito is a minimalist Android app that simply displays a summoner's match history. It was developed to be used as an alternative to popular web-based match history sites such as [OP.GG](http://na.op.gg/) or [LolKing](http://www.lolking.net/). Project Rito has two modes: condensed and detailed.
 
 
 ---
