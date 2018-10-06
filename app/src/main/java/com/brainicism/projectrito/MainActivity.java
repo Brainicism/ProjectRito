@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.refresh_button: {
                 if (notFirstRun) //if a summoner has already done a search
                 {
-                    checkValidSummoner check = new checkValidSummoner();
+                    CheckValidSummoner check = new CheckValidSummoner();
                     check.execute();
                     try {
                         this.getCurrentFocus().clearFocus();
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "ERROR: No internet connection", Toast.LENGTH_SHORT).show();
                 } else {
                     summonerName = String.valueOf(searchView.getQuery()); //gets summoner name from search bar
-                    checkValidSummoner check = new checkValidSummoner(); // begins to search for summmoner from server
+                    CheckValidSummoner check = new CheckValidSummoner(); // begins to search for summmoner from server
                     check.execute();
                     searchItem.collapseActionView(); //collapses search bar
                 }
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         matchHistoryLength = prefs.getInt("matchHistoryLength", 5);
         MiscMethods.initialAPISetup(); //updates API settings
         MiscMethods.regionSetup();
-        fetchData fetch = new fetchData(); //preload data
+        FetchData fetch = new FetchData(); //preload data
         fetch.execute();
     }
 
@@ -220,12 +220,12 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig); //re-shows summoners info
         if (notFirstRun || !summonerName.equals("")) {
-            checkValidSummoner check = new checkValidSummoner();
+            CheckValidSummoner check = new CheckValidSummoner();
             check.execute();
         }
     }
 
-    private class checkValidSummoner extends AsyncTask<String, Void, Void> {
+    private class CheckValidSummoner extends AsyncTask<String, Void, Void> {
 
         Summoner prevSummoner = summoner;
         boolean summonerFound = true;
@@ -350,13 +350,13 @@ public class MainActivity extends AppCompatActivity {
 
         public void retrieveSummonerData() {
             hideKeyboard();
-            getSummonerData retrieve = new getSummonerData();
+            GetSummonerData retrieve = new GetSummonerData();
             retrieve.execute();
         }
     }
 
 
-    private class getSummonerData extends AsyncTask<Void, Void, List<Match>> { //async task for retrieving match data from API
+    private class GetSummonerData extends AsyncTask<Void, Void, List<Match>> { //async task for retrieving match data from API
         boolean emptyMatch = false;
         public CurrentGame currentGame;
         long currGameID;
@@ -554,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
             gameProgression.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) { //updates in game time on click
-                    updateTime fetch = new updateTime(); //preload data
+                    updateTime fetch = new UpdateTime(); //preload data
                     fetch.execute();
                 }
             });
@@ -626,7 +626,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private class updateTime extends AsyncTask<String, Void, Void> {
+        private class UpdateTime extends AsyncTask<String, Void, Void> {
             boolean currGame = true;
             boolean newGame = false;
 
@@ -663,7 +663,7 @@ public class MainActivity extends AppCompatActivity {
                 } else { //if in a game, update time
                     if (newGame) { // if user is now in a different game, reload data
                         Toast.makeText(MainActivity.this, "New game started: loading new game", Toast.LENGTH_SHORT).show();
-                        getSummonerData retrieve = new getSummonerData();
+                        GetSummonerData retrieve = new GetSummonerData();
                         retrieve.execute();
                     } else { //if user is in same game, update time
                         int minutes = (int) currGameTime / 60;
@@ -731,7 +731,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private class fetchData extends AsyncTask<String, Void, Void> {
+    private class FetchData extends AsyncTask<String, Void, Void> {
         @Override
         protected void onPreExecute() {
         }
