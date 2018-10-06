@@ -554,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
             gameProgression.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) { //updates in game time on click
-                    updateTime fetch = new UpdateTime(); //preload data
+                    UpdateTime fetch = new UpdateTime(); //preload data
                     fetch.execute();
                 }
             });
