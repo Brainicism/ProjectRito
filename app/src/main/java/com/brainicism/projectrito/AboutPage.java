@@ -112,7 +112,7 @@ public class AboutPage extends AppCompatActivity {
         contributorText.setMovementMethod(LinkMovementMethod.getInstance());
         contributorText.setHighlightColor(Color.TRANSPARENT);
         if (!firstRun) { //only recheck names if not run
-            updateContributor check = new updateContributor();
+            UpdateContributor check = new UpdateContributor();
             check.execute();
             firstRun = true;
         }
@@ -137,7 +137,7 @@ public class AboutPage extends AppCompatActivity {
         numCon++;
     }
 
-    class updateContributor extends AsyncTask<String, Void, Void> {
+    class UpdateContributor extends AsyncTask<String, Void, Void> {
         @Override
         protected void onPreExecute() {
         }
