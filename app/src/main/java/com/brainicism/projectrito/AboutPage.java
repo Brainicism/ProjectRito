@@ -29,11 +29,12 @@ public class AboutPage extends AppCompatActivity {
     public static String c6 = "TheTrueCarry";
     public static String c7 = "HeilHongers";
     public static String c8 = "Kirishima Touka";
+    public static String c9 = "ArkaREEEEE";
     public static boolean firstRun = false;
     public static final String TAG = AboutPage.class.getName();
     public static int numCon;
     public static SpannableString ss;
-    public static ClickableSpan[] contributorClickSpan = new ClickableSpan[9];
+    public static ClickableSpan[] contributorClickSpan = new ClickableSpan[10];
     public static TextView oriannaCon, picassoCon, gifCon, gsonCon;
     public static String span;
     public static TextView contributorText;
@@ -81,7 +82,7 @@ public class AboutPage extends AppCompatActivity {
             }
         });
 
-        span = "Developed and maintained by \n " + c + " \n Painstakingly bug-tested by  \n " + c1 + " \n Special thanks to  \n " + c2 + " \n " + c3 + " \n " + c4 + " \n " + c5 + " \n " + c6 + " \n " + c7 + " \n " + c8;
+        span = "Developed and maintained by \n " + c + " \n Painstakingly bug-tested by  \n " + c1 + " \n Special thanks to  \n " + c2 + " \n " + c3 + " \n " + c4 + " \n " + c5 + " \n " + c6 + " \n " + c7 + " \n " + c8 + " \n " + c9;
         ss = new SpannableString(span);
 
         addClickableSpan(44492014, getApplicationContext());
@@ -93,6 +94,7 @@ public class AboutPage extends AppCompatActivity {
         addClickableSpan(30213439, getApplicationContext());
         addClickableSpan(52401618, getApplicationContext());
         addClickableSpan(36814870, getApplicationContext());
+        addClickableSpan(87763368, getApplicationContext());
 
 
         ss.setSpan(contributorClickSpan[0], span.indexOf(c), span.indexOf(c) + c.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -104,6 +106,7 @@ public class AboutPage extends AppCompatActivity {
         ss.setSpan(contributorClickSpan[6], span.indexOf(c6), span.indexOf(c6) + c6.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(contributorClickSpan[7], span.indexOf(c7), span.indexOf(c7) + c7.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(contributorClickSpan[8], span.indexOf(c8), span.indexOf(c8) + c8.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(contributorClickSpan[9], span.indexOf(c9), span.indexOf(c9) + c9.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         contributorText = (TextView) findViewById(R.id.contributionsText);
         contributorText.setTextSize(17);
@@ -154,6 +157,7 @@ public class AboutPage extends AppCompatActivity {
                 c6 = RiotAPI.getSummonerName(30213439);
                 c7 = RiotAPI.getSummonerName(52401618);
                 c8 = RiotAPI.getSummonerName(36814870);
+                c9 = RiotAPI.getSummonerName(87763368);
             } catch (APIException e) {
                 e.printStackTrace();
             }
@@ -163,7 +167,7 @@ public class AboutPage extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            span = "Developed and maintained by \n " + c + " \n Painstakingly bug-tested by  \n " + c1 + " \n Special thanks to  \n " + c2 + " \n " + c3 + " \n " + c4 + " \n " + c5 + " \n " + c6 + " \n " + c7 + " \n " + c8;
+            span = "Developed and maintained by \n " + c + " \n Painstakingly bug-tested by  \n " + c1 + " \n Special thanks to  \n " + c2 + " \n " + c3 + " \n " + c4 + " \n " + c5 + " \n " + c6 + " \n " + c7 + " \n " + c8 + " \n " + c9;
             ss = new SpannableString(span);
             contributorText.setLinkTextColor(Color.parseColor("#3366BB"));
 
@@ -176,6 +180,7 @@ public class AboutPage extends AppCompatActivity {
             ss.setSpan(contributorClickSpan[6], span.indexOf(c6), span.indexOf(c6) + c6.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             ss.setSpan(contributorClickSpan[7], span.indexOf(c7), span.indexOf(c7) + c7.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             ss.setSpan(contributorClickSpan[8], span.indexOf(c8), span.indexOf(c8) + c8.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(contributorClickSpan[9], span.indexOf(c9), span.indexOf(c9) + c9.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             contributorText = (TextView) findViewById(R.id.contributionsText);
             contributorText.setText(ss);
