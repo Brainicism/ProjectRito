@@ -14,8 +14,6 @@ public class CustomMultilistPreference extends ListPreference implements OnClick
     private int prevDialogEntryIndex;
     public CustomMultilistPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-
     }
 
     public CustomMultilistPreference(Context context) {
@@ -25,7 +23,6 @@ public class CustomMultilistPreference extends ListPreference implements OnClick
     private int getValueIndex() {
         return findIndexOfValue(this.getValue() +"");
     }
-
 
     @Override
     protected void onPrepareDialogBuilder(Builder builder) {
@@ -43,9 +40,8 @@ public class CustomMultilistPreference extends ListPreference implements OnClick
         builder.setPositiveButton("OK", this);
     }
 
-    public  void onClick (DialogInterface dialog, int which)
-    {
-        if(which == -2){
+    public  void onClick (DialogInterface dialog, int which) {
+        if (which == -2){
             this.setValue(this.getEntryValues()[prevDialogEntryIndex]+"");
         }
         else {

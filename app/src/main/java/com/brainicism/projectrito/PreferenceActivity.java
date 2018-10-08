@@ -21,7 +21,6 @@ public class PreferenceActivity extends AppCompatActivity {
         {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
-
         }
     }
 }

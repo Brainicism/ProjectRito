@@ -284,8 +284,6 @@ public class MiscMethods {
             else if (gameFive == 'N')
                 MainActivity.promoGame5.setImageResource(R.drawable.promo_unplayed);
         }
-
-
     }
 
     public static int getLoadingImageResource() {

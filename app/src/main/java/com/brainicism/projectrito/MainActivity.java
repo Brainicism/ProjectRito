@@ -444,7 +444,6 @@ public class MainActivity extends AppCompatActivity {
                 //case not needed for recent_10
             }
 
-
             if (ranked) { //convert matchreferences to match objects
                 try {
                     matchList = MatchAPI.getMatchesByReference(cleanedRefList);
@@ -522,7 +521,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             matchHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() { //detects on click on a specific item
-
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) { //sends user to detailed match history on click
                     String fullURL = ((TextView) view.findViewById(R.id.matchURI)).getText().toString();
@@ -680,7 +678,6 @@ public class MainActivity extends AppCompatActivity {
                         updateTimeIndicator();
                     }
                 }
-
             }
 
         }

@@ -27,7 +27,6 @@ public class InternalWebView extends Activity {
         webView.setWebViewClient(new WebViewClient());
 
         webView.loadUrl(URL);
-
     }
 
 }

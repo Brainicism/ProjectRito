@@ -59,7 +59,6 @@ public class GameAdapter extends ArrayAdapter<Game> {
     private Game selectedGame; //the current match on the list
     private Champion champ; //champion played by the main summoner
 
-
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());     //inflates layout
@@ -171,7 +170,6 @@ public class GameAdapter extends ArrayAdapter<Game> {
         {
             if (itemID[i] == 0) {
                 itemURL[i] = "http://i.imgur.com/M3e1IqG.png"; //shows empty item slot
-
             }
         }
 
@@ -213,7 +211,6 @@ public class GameAdapter extends ArrayAdapter<Game> {
                 score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists) + " (" + String.valueOf(kdaValue) + ")");
             } else {
                 score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists) + "(∞)");
-
             }
         } else {
             score.setText(String.valueOf(kills) + "/" + String.valueOf(deaths) + "/" + String.valueOf(assists));

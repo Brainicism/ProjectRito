@@ -58,12 +58,10 @@ public class MatchAdapter extends ArrayAdapter<Match> {
     private LinearLayout goldCs;
     private LinearLayout summonerSpellBox;
 
-
     private Match selectedMatch; //the current match on the list
     private List<Participant> listOfParticipants; //list of participants within the match
     private Participant summoner; //the main participant of the match
     private Champion champ; //champion played by the main summoner
-
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -128,7 +126,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         matchParticipantID = matchParticipantID.replaceAll("[^-?0-9]+", "");
         matchParticipantID = matchParticipantID.substring(2, matchParticipantID.length());
 
-
         int currentCutoff = selectedMatch.getVersion().indexOf(".", selectedMatch.getVersion().indexOf(".") + 1);
         for (int i = 0; i < MainActivity.versionsList.size(); i++) {
             int cutoff = MainActivity.versionsList.get(i).indexOf(".", MainActivity.versionsList.get(0).indexOf(".") + 1); //cutoff for realms version number
@@ -181,7 +178,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 break;
         }
 
-
         itemURL[0] = "http://ddragon.leagueoflegends.com/cdn/" + correctVers + "/img/item/" + itemID[0] + ".png"; //gets image urls
         itemURL[1] = "http://ddragon.leagueoflegends.com/cdn/" + correctVers + "/img/item/" + itemID[1] + ".png";
         itemURL[2] = "http://ddragon.leagueoflegends.com/cdn/" + correctVers + "/img/item/" + itemID[2] + ".png";
@@ -199,7 +195,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
                 itemURL[i] = "http://i.imgur.com/M3e1IqG.png"; //shows empty item slot
             }
         }
-
 
         Picasso.with(getContext()).load(itemURL[0]).into(item0); //loads image url's into image views
         Picasso.with(getContext()).load(itemURL[1]).into(item1);
