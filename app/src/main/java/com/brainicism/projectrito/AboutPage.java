@@ -96,7 +96,6 @@ public class AboutPage extends AppCompatActivity {
         addClickableSpan(36814870, getApplicationContext());
         addClickableSpan(87763368, getApplicationContext());
 
-
         ss.setSpan(contributorClickSpan[0], span.indexOf(c), span.indexOf(c) + c.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(contributorClickSpan[1], span.indexOf(c1), span.indexOf(c1) + c1.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(contributorClickSpan[2], span.indexOf(c2), span.indexOf(c2) + c2.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
