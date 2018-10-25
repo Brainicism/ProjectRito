@@ -34,5 +34,5 @@ In the settings menu, the user is able to change the default region, number of m
 <a href="http://i.imgur.com/zZX0a9E.png"><img src="http://i.imgur.com/zZX0a9E.png"  height="480" width="270" ></a>
 
 ---
-'Project Rito' isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
+'Project Rito' is not endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
    
