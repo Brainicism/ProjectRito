@@ -29,7 +29,7 @@ public class AboutPage extends AppCompatActivity {
     public static String c6 = "TheTrueCarry";
     public static String c7 = "HeilHongers";
     public static String c8 = "Kirishima Touka";
-    public static String c9 = "ArkaREEEEE";
+    public static String c9 = "ArkaREEEEE poggers";
     public static boolean firstRun = false;
     public static final String TAG = AboutPage.class.getName();
     public static int numCon;
